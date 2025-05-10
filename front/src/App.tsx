@@ -7,7 +7,7 @@ import MyPage from "./pages/MyPage";
 import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import WordTestPage from "./pages/WordTest";
+import WelcomePage from "./pages/WelcomePage";
 
 const router = createBrowserRouter([
   {
@@ -15,6 +15,10 @@ const router = createBrowserRouter([
     element: <RootLayout />,
     errorElement: <NotFound />,
     children: [
+      {
+        index: true, // path: "/"에 해당
+        element: <WelcomePage />,
+      },
       {
         path: "/signin",
         element: <SigninPage />,
@@ -30,6 +34,10 @@ const router = createBrowserRouter([
             path: "/mypage",
             element: <MyPage />,
           },
+          // {
+          //   path: "/homepage",
+          //   element: <HomePage />,
+          // },
         ],
       },
       {
