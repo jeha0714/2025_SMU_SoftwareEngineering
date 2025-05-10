@@ -16,7 +16,7 @@ const router = createBrowserRouter([
     errorElement: <NotFound />,
     children: [
       {
-        index: true, // path: "/"에 해당
+        path: "/welcome",
         element: <WelcomePage />,
       },
       {
@@ -40,12 +40,10 @@ const router = createBrowserRouter([
           // },
         ],
       },
-      {
-        path: "/test",
-        element: <WordTestPage />,
-      },
-      
-      
+      // {
+      //   path: "/test",
+      //   element: <WordTestPage />,
+      // },
     ],
   },
 ]);
