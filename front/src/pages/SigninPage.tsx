@@ -5,9 +5,8 @@ import { FaRegUser } from "react-icons/fa";
 import { CiLock } from "react-icons/ci";
 import InputForm from "../components/InputForm";
 import { useAuth } from "../context/AuthContext";
-import umcServerNoAuth from '../hooks/loginApi';
 import type { AxiosError } from "axios";
-
+import { vocaServerNoAuth } from "../utils/axiosInfo";
 
 export default function SigninPage() {
   const navigate = useNavigate();
@@ -82,25 +81,24 @@ export default function SigninPage() {
     return error === "";
   };
 
-   const { mutate: loginMutate, isPending } = useMutation({
+  const { mutate: loginMutate, isPending } = useMutation({
     mutationFn: (data: { id: string; password: string }) =>
-      umcServerNoAuth.post("/users/login", {
+      vocaServerNoAuth.post("/users/login", {
         userId: data.id,
         userPassword: data.password,
       }),
     onSuccess: (response) => {
-      console.log(response)
+      console.log(response);
       const { accessToken } = response.data.jwtToken; // 백엔드 응답 구조에 맞게 조정 필요
       sessionStorage.setItem("accessToken", accessToken);
-        login();
-        navigate("/");
+      login();
+      navigate("/");
     },
     onError: (error: AxiosError<{ status: number }>) => {
       console.error("Login failed:", error);
       setStatusCode(error.response?.data.status ?? null);
     },
   });
-  
 
   // Form submission handler
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {

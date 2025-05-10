@@ -2,12 +2,12 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import InputForm from "../components/InputForm";
 import { useMutation } from "@tanstack/react-query";
-import axios from "axios";
 import { AxiosError } from "axios";
+import { vocaServerNoAuth } from "../utils/axiosInfo";
 
 export default function SignupPage() {
   const navigate = useNavigate();
-  
+
   const [statusError, setStatusError] = useState<string | null>(null);
   const [formValues, setFormValues] = useState({
     nickname: "",
@@ -97,7 +97,7 @@ export default function SignupPage() {
   // API mutation setup with React Query
   const { mutate: signupMutate, isPending } = useMutation({
     mutationFn: (data: { nickname: string; id: string; password: string }) =>
-      axios.post("http://localhost:8080/users/join", {
+      vocaServerNoAuth.post("/users/join", {
         nickName: data.nickname,
         userId: data.id,
         userPassword: data.password,
@@ -105,7 +105,7 @@ export default function SignupPage() {
     onSuccess: (response) => {
       // 성공적인 가입 후 처리
       console.log("가입 성공", response.data);
-      navigate("/login"); // 로그인 페이지로 리디렉션
+      navigate("/signup"); // 로그인 페이지로 리디렉션
     },
     onError: (error: AxiosError<{ status: number }>) => {
       console.error("Register failed:", error);
