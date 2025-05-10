@@ -9,7 +9,7 @@ export default function SignupPage() {
   const navigate = useNavigate();
 
   const [statusError, setStatusError] = useState<string | null>(null);
-  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
   const [formValues, setFormValues] = useState({
     nickname: "",
     id: "",
@@ -108,7 +108,7 @@ export default function SignupPage() {
       console.log("가입 성공", response.data);
       navigate("/signup"); // 로그인 페이지로 리디렉션
     },
-    onError: (error: AxiosError<{ status: number }>) => {
+    onError: (error: AxiosError<{ message: string }>) => {
       console.error("Register failed:", error);
       setStatusError(error.message);
     },
