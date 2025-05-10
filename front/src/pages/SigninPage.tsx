@@ -5,6 +5,8 @@ import { FaRegUser } from "react-icons/fa";
 import { CiLock } from "react-icons/ci";
 import InputForm from "../components/InputForm";
 import { useAuth } from "../context/AuthContext";
+import type { AxiosError } from "axios";
+import { vocaServerNoAuth } from "../utils/axiosInfo";
 
 export default function SigninPage() {
   const navigate = useNavigate();
@@ -79,26 +81,22 @@ export default function SigninPage() {
     return error === "";
   };
 
-  // Setup API mutation with React Query
   const { mutate: loginMutate, isPending } = useMutation({
     mutationFn: (data: { id: string; password: string }) =>
-      // need change server axios
-      umcServerNoAuth.post(`/v1/auth/signin`, {
-        id: data.id,
-        password: data.password,
+      vocaServerNoAuth.post("/users/login", {
+        userId: data.id,
+        userPassword: data.password,
       }),
     onSuccess: (response) => {
-      const { accessToken } = response.data.data;
-      // 로그인 정보 저장
+      console.log(response);
+      const { accessToken } = response.data.jwtToken; // 백엔드 응답 구조에 맞게 조정 필요
       sessionStorage.setItem("accessToken", accessToken);
-      // 로그인 상태 업데이트
       login();
-      // 홈페이지로 이동
       navigate("/");
     },
-    onError: (error) => {
+    onError: (error: AxiosError<{ status: number }>) => {
       console.error("Login failed:", error);
-      setStatusCode(error?.data.status); // 인증 실패로 상태 코드 설정
+      setStatusCode(error.response?.data.status ?? null);
     },
   });
 
