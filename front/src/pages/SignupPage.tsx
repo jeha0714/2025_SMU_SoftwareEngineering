@@ -2,9 +2,12 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import InputForm from "../components/InputForm";
 import { useMutation } from "@tanstack/react-query";
+import axios from "axios";
+import { AxiosError } from "axios";
 
 export default function SignupPage() {
   const navigate = useNavigate();
+  
   const [statusError, setStatusError] = useState<string | null>(null);
   const [formValues, setFormValues] = useState({
     nickname: "",
@@ -91,27 +94,24 @@ export default function SignupPage() {
     return error === "";
   };
 
-  // Setup API mutation with React Query
-  const { mutate: loginMutate, isPending } = useMutation({
-    mutationFn: (data: { id: string; password: string }) =>
-      // need change server axios
-      umcServerNoAuth.post(`/v1/auth/signin`, {
-        id: data.id,
-        password: data.password,
+  // API mutation setup with React Query
+  const { mutate: signupMutate, isPending } = useMutation({
+    mutationFn: (data: { nickname: string; id: string; password: string }) =>
+      axios.post("http://localhost:8080/users/join", {
+        nickName: data.nickname,
+        userId: data.id,
+        userPassword: data.password,
       }),
     onSuccess: (response) => {
-      const { accessToken } = response.data.data;
-      // 로그인 정보 저장
-      sessionStorage.setItem("accessToken", accessToken);
-      // 홈페이지로 이동
-      navigate("/");
+      // 성공적인 가입 후 처리
+      console.log("가입 성공", response.data);
+      navigate("/login"); // 로그인 페이지로 리디렉션
     },
-    onError: (error) => {
-      console.error("Login failed:", error);
-      setStatusError(error?.data.status); // 인증 실패 원인 저장
+    onError: (error: AxiosError<{ status: number }>) => {
+      console.error("Register failed:", error);
+      setStatusError("Err");
     },
   });
-
   // Form submission handler
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -130,7 +130,7 @@ export default function SignupPage() {
       return;
     }
 
-    loginMutate(formValues);
+    signupMutate(formValues);
   };
 
   const isFormValid =

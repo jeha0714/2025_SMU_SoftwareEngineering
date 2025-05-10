@@ -7,6 +7,7 @@ import MyPage from "./pages/MyPage";
 import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import WordTestPage from "./pages/WordTest";
 
 const router = createBrowserRouter([
   {
@@ -31,6 +32,12 @@ const router = createBrowserRouter([
           },
         ],
       },
+      {
+        path: "/test",
+        element: <WordTestPage />,
+      },
+      
+      
     ],
   },
 ]);
