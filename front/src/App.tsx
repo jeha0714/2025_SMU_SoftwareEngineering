@@ -40,10 +40,6 @@ const router = createBrowserRouter([
           // },
         ],
       },
-      {
-        path: "/welcome",
-        element: <WelcomePage />,
-      },
     ],
   },
 ]);
