@@ -1,6 +1,5 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import RootLayout from "./layout/RootLayout";
-import { AuthFormProvider } from "./context/SignupFormContext";
 import NotFound from "./components/NotFound";
 import SigninPage from "./pages/SigninPage";
 import SignupPage from "./pages/SignupPage";
@@ -17,19 +16,11 @@ const router = createBrowserRouter([
     children: [
       {
         path: "/signin",
-        element: (
-          <AuthFormProvider>
-            <SigninPage />
-          </AuthFormProvider>
-        ),
+        element: <SigninPage />,
       },
       {
         path: "/signup",
-        element: (
-          <AuthFormProvider>
-            <SignupPage />,
-          </AuthFormProvider>
-        ),
+        element: <SignupPage />,
       },
       {
         element: <ProtectedRoute />,
