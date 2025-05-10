@@ -9,6 +9,7 @@ export default function SignupPage() {
   const navigate = useNavigate();
 
   const [statusError, setStatusError] = useState<string | null>(null);
+  const [isSubmitted, setIsSubmitted] = useState(false);
   const [formValues, setFormValues] = useState({
     nickname: "",
     id: "",
@@ -109,13 +110,14 @@ export default function SignupPage() {
     },
     onError: (error: AxiosError<{ status: number }>) => {
       console.error("Register failed:", error);
-      setStatusError("Err");
+      setStatusError(error.message);
     },
   });
   // Form submission handler
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setStatusError(null); // 이전 오류 상태 초기화
+    setIsSubmitted(true); // 제출 시 true
 
     // 모든 필드를 터치 처리
     setTouchedFields({
@@ -127,6 +129,7 @@ export default function SignupPage() {
 
     // 에러가 있으면 API 호출하지 않고 리턴
     if (!isFormValid) {
+      setStatusError("모든 입력값을 올바르게 입력해주세요.");
       return;
     }
 
@@ -188,15 +191,12 @@ export default function SignupPage() {
           >
             {isPending ? "가입 중..." : "회원가입"}
           </button>
-          {statusError && (
-            <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm">
+          {!isFormValid && isSubmitted ? (
+            <div className="text-red-500 text-sm mt-1 text-center">
               {statusError}
             </div>
-          )}
-          {!isFormValid && (
-            <div className="text-red-500 text-sm mt-2 text-center">
-              모든 입력값을 올바르게 입력해주세요.
-            </div>
+          ) : (
+            <></>
           )}
         </form>
       </div>
