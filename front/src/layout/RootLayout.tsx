@@ -11,7 +11,6 @@ export default function RootLayout() {
       <Navbar />
       <main className="w-full h-[90vh] flex flex-row">
         {!isLogin ? <></> : <Side />}
-        <Side />
         <Outlet />
       </main>
     </>
