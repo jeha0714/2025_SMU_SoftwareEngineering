@@ -103,8 +103,6 @@ export default function SignupPage() {
       const { accessToken } = response.data.data;
       // 로그인 정보 저장
       sessionStorage.setItem("accessToken", accessToken);
-      // 로그인 상태 업데이트
-      login();
       // 홈페이지로 이동
       navigate("/");
     },
