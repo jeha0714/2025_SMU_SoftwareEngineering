@@ -7,23 +7,22 @@ import {
   Globe,
   BookOpen,
   MoreHorizontal,
+  Dot,
 } from "lucide-react";
 
 export default function Sidebar() {
-  const [openMenus, setOpenMenus] = useState({
-    토익: true,
-  });
+  const [openMenus, setOpenMenus] = useState<Record<string, boolean>>({});
 
-  const [activeItem, setActiveItem] = useState("토익 기본");
+  const [activeItem, setActiveItem] = useState<string>("");
 
-  const toggleMenu = (menu) => {
+  const toggleMenu = (menu: string) => {
     setOpenMenus((prev) => ({
       ...prev,
       [menu]: !prev[menu],
     }));
   };
 
-  const handleItemClick = (item) => {
+  const handleItemClick = (item: string) => {
     setActiveItem(item);
   };
 
@@ -45,7 +44,6 @@ export default function Sidebar() {
   const menuItems = [
     {
       name: "수능",
-      hasSubmenu: true,
       submenu: [
         "토익 기본",
         "토익 심화",
@@ -63,51 +61,40 @@ export default function Sidebar() {
     },
     {
       name: "토플",
-      hasSubmenu: true,
       submenu: ["토익 기본", "토익 심화"],
     },
     {
       name: "토익",
-      hasSubmenu: true,
       submenu: ["토익 기본", "토익 심화"],
     },
     {
       name: "기타",
-      hasSubmenu: true,
       submenu: ["비지니스 기본 이래용 과연 그럴까요? 후후하하하", "일상 영어"],
     },
   ];
 
   return (
-    <aside className="w-70 h-full bg-white shadow-lg  overflow-y-auto border border-gray-200">
+    <aside className="w-64 h-full bg-white shadow-lg  overflow-y-auto border border-gray-200">
       <div className="py-2">
         {menuItems.map((item) => (
           <div key={item.name} className="mb-2">
             <button
-              onClick={() =>
-                item.hasSubmenu
-                  ? toggleMenu(item.name)
-                  : handleItemClick(item.name)
-              }
-              className={`w-full flex items-center justify-between px-4 py-3 hover:bg-gray-100 transition-colors ${
-                !item.hasSubmenu && activeItem === item.name
-                  ? "bg-indigo-100 text-indigo-600 font-medium"
-                  : "text-gray-700"
-              }`}
+              onClick={() => toggleMenu(item.name)}
+              className={`w-full flex items-center justify-between px-4 py-3 hover:bg-gray-100 transition-colors text-gray-700`}
             >
               <div className="flex items-center gap-3">
                 {renderIcon(item.name)}
                 <span>{item.name}</span>
               </div>
-              {item.hasSubmenu &&
-                (openMenus[item.name] ? (
-                  <ChevronUp size={18} />
-                ) : (
-                  <ChevronDown size={18} />
-                ))}
+              {openMenus[item.name] ? (
+                <ChevronUp size={18} />
+              ) : (
+                <ChevronDown size={18} />
+              )}
             </button>
 
-            {item.hasSubmenu && openMenus[item.name] && (
+            {/* menu 내부 단어장 list */}
+            {openMenus[item.name] && (
               <div className="flex flex-col bg-gray-50">
                 {item.submenu.map((subItem) => (
                   <button
@@ -124,7 +111,7 @@ export default function Sidebar() {
                         {activeItem === subItem ? (
                           <ChevronRight size={16} className="text-indigo-600" />
                         ) : (
-                          <span />
+                          <Dot className="text-gray-600" />
                         )}
                       </span>
                       <span>{subItem}</span>

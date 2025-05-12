@@ -46,7 +46,7 @@ export default function Navbar() {
   }
 
   return (
-    <nav className="w-full py-4 px-6 flex justify-between items-center bg-gradient-to-r from-sky-50 to-blue-50 shadow-md sticky top-0 z-50">
+    <nav className="w-full h-[10vh] py-4 px-6 flex justify-between items-center bg-gradient-to-r from-sky-50 to-blue-50 shadow-md sticky top-0 z-50">
       <Link
         to={"/"}
         className="flex flex-row justify-center items-center text-xl font-bold transition-transform duration-300 hover:scale-105"
