@@ -1,0 +1,36 @@
+:global(.rbc-month-view) {
+  border-radius: 0.5rem;
+  overflow: hidden;
+  border: none;
+  height: 100%;
+}
+
+:global(.rbc-month-row) {
+  min-height: 0;
+}
+
+:global(.rbc-header) {
+  padding: 5px 0;
+  font-weight: bold;
+  background-color: #f3f4f6;
+  color: #4b5563;
+  font-size: 0.75rem;
+}
+
+:global(.rbc-date-cell) {
+  padding: 2px;
+  text-align: center;
+  font-size: 0.875rem;
+}
+
+:global(.rbc-off-range) {
+  color: #9ca3af;
+}
+
+:global(.rbc-off-range-bg) {
+  background-color: #f9fafb;
+}
+
+:global(.rbc-today) {
+  background-color: #f3f4f6;
+}
