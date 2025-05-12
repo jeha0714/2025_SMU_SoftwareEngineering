@@ -1,7 +1,7 @@
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import Navbar from "../components/Navbar";
-import Side from "../components/Side";
+import Sidebar from "../components/Sidebar";
 
 export default function RootLayout() {
   const { isLogin } = useAuth();
@@ -23,7 +23,7 @@ export default function RootLayout() {
         ) : (
           <>
             {/* Side 컴포넌트는 로그인된 경우에만 표시 */}
-            {isLogin && <Side />}
+            {isLogin && <Sidebar />}
             <Outlet />
           </>
         )}
