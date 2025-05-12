@@ -5,7 +5,7 @@ export default function WelcomePage() {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-indigo-100 font-sans">
+    <div className="w-full min-h-screen bg-gradient-to-b from-blue-50 to-indigo-100 font-sans">
       {/* 히어로 섹션 */}
       <div className="max-w-6xl mx-auto px-6 py-16 md:py-24">
         <div className="flex flex-col md:flex-row items-center">

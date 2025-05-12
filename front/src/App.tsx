@@ -52,7 +52,7 @@ export const queryClient = new QueryClient();
 
 function App() {
   return (
-    <main className="w-full h-screen flex flex-col justify-cetner items-center bg-white">
+    <main className="w-screen h-screen flex flex-col justify-cetner items-center bg-white">
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
           <RouterProvider router={router} />
