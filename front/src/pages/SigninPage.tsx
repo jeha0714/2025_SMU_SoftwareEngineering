@@ -88,13 +88,14 @@ export default function SigninPage() {
         userId: data.id,
         userPassword: data.password,
       }),
-    onSuccess: (response) => {
-      console.log(response)
-      const { accessToken } = response.data.jwtToken; // 백엔드 응답 구조에 맞게 조정 필요
-      sessionStorage.setItem("accessToken", accessToken);
+      onSuccess: (response) => {
+        console.log(response);
+        const accessToken = response.data.jwtToken; // jwtToken은 문자열임
+        console.log(accessToken);
+        sessionStorage.setItem("accessToken", accessToken);
         login();
         navigate("/");
-    },
+      },      
     onError: (error: AxiosError<{ status: number }>) => {
       console.error("Login failed:", error);
       setStatusCode(error.response?.data.status ?? null);
