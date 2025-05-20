@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   ChevronDown,
   ChevronUp,
@@ -14,6 +15,7 @@ export default function Sidebar() {
   const [openMenus, setOpenMenus] = useState<Record<string, boolean>>({});
 
   const [activeItem, setActiveItem] = useState<string>("");
+  const navigate = useNavigate();
 
   const toggleMenu = (menu: string) => {
     setOpenMenus((prev) => ({
@@ -24,6 +26,7 @@ export default function Sidebar() {
 
   const handleItemClick = (item: string) => {
     setActiveItem(item);
+    navigate(`/wordbook/${encodeURIComponent(item)}`);
   };
 
   const renderIcon = (name: string) => {
@@ -74,7 +77,7 @@ export default function Sidebar() {
   ];
 
   return (
-    <aside className="w-64 h-full bg-white shadow-lg  overflow-y-auto border border-gray-200">
+    <aside className="w-full h-full bg-white shadow-lg  overflow-y-auto border border-gray-200">
       <div className="py-2">
         {menuItems.map((item) => (
           <div key={item.name} className="mb-2">
