@@ -7,6 +7,7 @@ import MyPage from "./pages/MyPage";
 import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import WelcomePage from "./pages/WelcomePage";
 import WordTestPage from "./pages/WordTest";
 import WorkbookList from "./pages/WorkBookListPage";
 import WorkBookDetailPage from './pages/WorkBookDetailPage';
@@ -17,6 +18,10 @@ const router = createBrowserRouter([
     element: <RootLayout />,
     errorElement: <NotFound />,
     children: [
+      {
+        path: "/welcome",
+        element: <WelcomePage />,
+      },
       {
         path: "/signin",
         element: <SigninPage />,
@@ -32,8 +37,16 @@ const router = createBrowserRouter([
             path: "/mypage",
             element: <MyPage />,
           },
+          // {
+          //   path: "/homepage",
+          //   element: <HomePage />,
+          // },
         ],
       },
+      // {
+      //   path: "/test",
+      //   element: <WordTestPage />,
+      // },
       {
         path: "/workbooks/:id",
         element: <WorkBookDetailPage/>, // ✅ 새로 추가된 부분
@@ -68,7 +81,7 @@ export const queryClient = new QueryClient();
 
 function App() {
   return (
-    <main className="w-full h-screen flex flex-col justify-cetner items-center bg-white">
+    <main className="w-screen h-screen flex flex-col justify-cetner items-center bg-white">
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
           <RouterProvider router={router} />

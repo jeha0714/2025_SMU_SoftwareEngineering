@@ -5,13 +5,13 @@ import { FaRegUser } from "react-icons/fa";
 import { CiLock } from "react-icons/ci";
 import InputForm from "../components/InputForm";
 import { useAuth } from "../context/AuthContext";
-import umcServerNoAuth from '../hooks/loginApi';
 import type { AxiosError } from "axios";
-
+import { vocaServerNoAuth } from "../utils/axiosInfo";
 
 export default function SigninPage() {
   const navigate = useNavigate();
-  const [statusCode, setStatusCode] = useState<number | null>(null);
+  const [statusError, setStatusError] = useState<string | null>(null);
+  const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
   const { login } = useAuth();
   const [formValues, setFormValues] = useState({
     id: "",
@@ -82,12 +82,13 @@ export default function SigninPage() {
     return error === "";
   };
 
-   const { mutate: loginMutate, isPending } = useMutation({
+  const { mutate: loginMutate, isPending } = useMutation({
     mutationFn: (data: { id: string; password: string }) =>
-      umcServerNoAuth.post("/users/login", {
+      vocaServerNoAuth.post("/users/login", {
         userId: data.id,
         userPassword: data.password,
       }),
+
       onSuccess: (response) => {
         console.log(response);
         const accessToken = response.data.jwtToken; // jwtToken은 문자열임
@@ -98,15 +99,15 @@ export default function SigninPage() {
       },      
     onError: (error: AxiosError<{ status: number }>) => {
       console.error("Login failed:", error);
-      setStatusCode(error.response?.data.status ?? null);
+      setStatusError("ID 또는 비밀번호가 틀렸습니다.");
     },
   });
-  
 
   // Form submission handler
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setStatusCode(null); // 이전 오류 상태 초기화
+    setStatusError(null); // 이전 오류 상태 초기화
+    setIsSubmitted(true); // 제출 시 true
 
     // 모든 필드를 터치 처리
     setTouchedFields({
@@ -116,6 +117,7 @@ export default function SigninPage() {
 
     // 에러가 있으면 API 호출하지 않고 리턴
     if (!isFormValid) {
+      setStatusError("모든 입력값을 올바르게 입력해주세요.");
       return;
     }
 
@@ -163,15 +165,12 @@ export default function SigninPage() {
           >
             {isPending ? "로그인 중..." : "로그인"}
           </button>
-          {statusCode && (
-            <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm">
-              ID 또는 비밀번호가 틀렸습니다.
+          {!isFormValid && isSubmitted ? (
+            <div className="text-red-500 text-sm mt-1 text-center">
+              {statusError}
             </div>
-          )}
-          {!isFormValid && (
-            <div className="text-red-500 text-sm mt-2 text-center">
-              모든 입력값을 올바르게 입력해주세요.
-            </div>
+          ) : (
+            <></>
           )}
 
           <div className="flex justify-end text-sm mt-4 text-gray-600">

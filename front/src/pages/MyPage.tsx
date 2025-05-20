@@ -1,58 +1,50 @@
-import { useEffect, useState } from "react";
-import { umcServerNeedAuth } from "../utils/axiosInfo";
-import axios from "axios";
-import { useAuth } from "../context/AuthContext";
-import { useNavigate } from "react-router-dom";
-import settingsIcon from "../assets/images/settings.svg";
-
-type UserInfoType = {
-  avatar: null;
-  bio: null;
-  createdAt: string;
-  email: string;
-  id: number;
-  name: string;
-  updatedAt: string;
-};
+import { useState } from "react";
+import CalendarPage from "../components/Calendar";
+import MyInfo from "../components/MyInfo";
 
 export default function MyPage() {
-  const [userInfo, setUserInfo] = useState<UserInfoType | null>(null);
-  const { logout } = useAuth();
-  const navigate = useNavigate();
-
-  async function getMyInfo() {
-    try {
-      const { data } = await umcServerNeedAuth.get(`/v1/users/me`);
-
-      setUserInfo(data.data);
-    } catch (err: unknown) {
-      // console.log(err);
-      if (axios.isAxiosError(err)) {
-        if (err.response?.status == 401) {
-          logout();
-          navigate("/signin");
-        }
-        // console.log("Response:", err.response);
-        // console.log("Request:", err.request);
-        // console.log("Message:", err.message);
-      }
-    }
-  }
-
-  useEffect(() => {
-    getMyInfo();
-  }, []);
+  const [activeTab, setActiveTab] = useState("calendar"); // "calendar" 또는 "info"
 
   return (
-    <article className="flex flex-row">
-      <img
-        src={settingsIcon}
-        className="w-[20px] h-[20px] m-5 hover:bg-zinc-700"
-      />
-      <div className="mb-5 text-3xl text-white">MyPage</div>
-      <div className="text-3xl text-white">
-        {!userInfo ? "Loading..." : `${userInfo?.email}`}
+    <article className="w-full h-[90vh] flex flex-col bg-gray-100 p-6">
+      {/* 버튼 섹션 */}
+      <div className="w-full flex justify-center mb-6">
+        <div className="inline-flex rounded-lg shadow-sm bg-white p-1">
+          <button
+            onClick={() => setActiveTab("info")}
+            className={`px-6 py-3 rounded-lg font-medium ${
+              activeTab === "info"
+                ? "bg-blue-500 text-white shadow-md"
+                : "text-gray-700 hover:bg-gray-100"
+            }`}
+          >
+            내 정보
+          </button>
+          <button
+            onClick={() => setActiveTab("calendar")}
+            className={`px-6 py-3 rounded-lg font-medium ${
+              activeTab === "calendar"
+                ? "bg-blue-500 text-white shadow-md"
+                : "text-gray-700 hover:bg-gray-100"
+            }`}
+          >
+            캘린더
+          </button>
+        </div>
       </div>
+
+      {/* 콘텐츠 섹션 */}
+      <section className="w-full flex-1 bg-white rounded-xl shadow-lg overflow-hidden">
+        {activeTab !== "calendar" ? (
+          <div className="h-full">
+            <MyInfo />
+          </div>
+        ) : (
+          <div className="h-full">
+            <CalendarPage />
+          </div>
+        )}
+      </section>
     </article>
   );
 }
