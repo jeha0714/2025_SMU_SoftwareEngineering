@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import axios from 'axios';
+import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import { vocaServerNeedAuth } from "../utils/axiosInfo";
 
 type Word = {
   id: number;
@@ -18,32 +18,30 @@ type WorkbookListDetailProps = {
   wrong?: boolean;
 };
 
-
-const WorkbookDetail: React.FC<WorkbookListDetailProps> = ({ wrong = false }) => {
+const WorkbookDetail: React.FC<WorkbookListDetailProps> = ({ wrong }) => {
   const { id } = useParams(); // 워크북 ID
   const [words, setWords] = useState<Word[]>([]);
-  const [workbookName, setWorkbookName] = useState<string>(''); // 단어장 이름 상태 추가
+  const [workbookName, setWorkbookName] = useState<string>(""); // 단어장 이름 상태 추가
   const [index, setIndex] = useState(0);
-  const [viewMode, setViewMode] = useState<'list' | 'card'>('list');
-  const API_HOST = "http://localhost:8080/api"
-    const token = sessionStorage.getItem("accessToken");
+  const [viewMode, setViewMode] = useState<"list" | "card">("list");
+  const token = sessionStorage.getItem("accessToken");
 
+  const url = wrong ? `/api/workbook/${id}?type=wrong` : `/api/workbook/${id}`;
+  console.log(url);
 
   useEffect(() => {
-    const url = wrong
-    ? API_HOST+`/workbook/${id}?type=wrong`
-    : API_HOST+`/workbook/${id}`;
-
-    axios.get(url,{
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    })
+    vocaServerNeedAuth
+      .get(url, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
       .then((res) => {
-        setWorkbookName(res.data.title);  // 단어장 이름 설정
+        console.log(res);
+        setWorkbookName(res.data.title); // 단어장 이름 설정
         setWords(res.data.wordList);
       })
-      .catch((err) => console.error('단어장 로딩 실패:', err));
+      .catch((err) => console.error("단어장 로딩 실패:", err));
   }, [id]);
 
   const nextWord = () => {
@@ -55,10 +53,11 @@ const WorkbookDetail: React.FC<WorkbookListDetailProps> = ({ wrong = false }) =>
   };
 
   const toggleViewMode = () => {
-    setViewMode(viewMode === 'list' ? 'card' : 'list');
+    setViewMode(viewMode === "list" ? "card" : "list");
   };
 
-  if (words.length === 0) return <div className="p-4">단어를 불러오는 중...</div>;
+  if (words.length === 0)
+    return <div className="p-4">단어를 불러오는 중...</div>;
 
   const word = words[index];
 
@@ -75,25 +74,38 @@ const WorkbookDetail: React.FC<WorkbookListDetailProps> = ({ wrong = false }) =>
       {/* 뷰 모드 버튼 */}
       <div className="flex gap-2 mb-4 flex-wrap justify-center">
         <button
-          className={`px-3 py-1 rounded border ${viewMode === 'list' ? 'bg-blue-600 text-white' : 'bg-white text-blue-600 border-blue-600'}`}
-          onClick={() => setViewMode('list')}
+          className={`px-3 py-1 rounded border ${
+            viewMode === "list"
+              ? "bg-blue-600 text-white"
+              : "bg-white text-blue-600 border-blue-600"
+          }`}
+          onClick={() => setViewMode("list")}
         >
           리스트로 보기
         </button>
         <button
-          className={`px-3 py-1 rounded border ${viewMode === 'card' ? 'bg-blue-600 text-white' : 'bg-white text-blue-600 border-blue-600'}`}
-          onClick={() => setViewMode('card')}
+          className={`px-3 py-1 rounded border ${
+            viewMode === "card"
+              ? "bg-blue-600 text-white"
+              : "bg-white text-blue-600 border-blue-600"
+          }`}
+          onClick={() => setViewMode("card")}
         >
           카드뷰로 보기
         </button>
       </div>
 
       {/* 리스트 모드 */}
-      {viewMode === 'list' ? (
+      {viewMode === "list" ? (
         <div className="max-h-[500px] overflow-y-auto space-y-2 sm:max-h-[400px]">
           {words.map((word) => (
-            <div key={word.id} className="border px-4 py-2 rounded-md shadow-sm bg-white">
-              <span className="font-semibold text-blue-700">{word.content}</span>
+            <div
+              key={word.id}
+              className="border px-4 py-2 rounded-md shadow-sm bg-white"
+            >
+              <span className="font-semibold text-blue-700">
+                {word.content}
+              </span>
               <span className="text-gray-500 ml-1">({word.partOfSpeech})</span>
               <span className="ml-2">- {word.meaning}</span>
             </div>
@@ -104,9 +116,15 @@ const WorkbookDetail: React.FC<WorkbookListDetailProps> = ({ wrong = false }) =>
         <div className="flex flex-col items-center justify-center bg-gray-50 min-h-[80%] min-w-[80vw] mx-auto overflow-hidden">
           <div className="flex flex-col items-center justify-center space-y-4 flex-1">
             <div className="text-center mb-6 px-4 sm:px-6">
-              <h1 className="text-4xl sm:text-6xl font-bold text-blue-700">{word.content}</h1>
-              <p className="text-xl sm:text-2xl text-gray-500 mt-2">{word.partOfSpeech}</p>
-              <p className="text-2xl sm:text-3xl text-gray-800 mt-4">{word.meaning}</p>
+              <h1 className="text-4xl sm:text-6xl font-bold text-blue-700">
+                {word.content}
+              </h1>
+              <p className="text-xl sm:text-2xl text-gray-500 mt-2">
+                {word.partOfSpeech}
+              </p>
+              <p className="text-2xl sm:text-3xl text-gray-800 mt-4">
+                {word.meaning}
+              </p>
             </div>
 
             <div className="flex gap-4 sm:gap-6 mt-8">

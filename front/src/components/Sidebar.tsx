@@ -96,8 +96,8 @@ export default function Sidebar() {
   if (loading) return <div className="p-4 text-gray-600">불러오는 중...</div>;
 
   return (
-    <aside className="w-full h-full bg-white shadow-lg overflow-y-auto border border-gray-200 flex flex-col">
-      <div className="py-2 flex-1">
+    <aside className="w-full h-full bg-white shadow-lg border border-gray-200 flex flex-col">
+      <div className="py-2 flex-1 overflow-y-auto">
         {menuItems.map((item) => (
           <div key={item.name} className="mb-2">
             <button

@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from 'react-router-dom';
+import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
 import axios from "axios";
+import { vocaServerNeedAuth } from "../utils/axiosInfo";
 
 type Word = {
   wordId: number;
   content: string;
   meaning: string;
-  partOfSpeech : String;
-  workBookId : number;
+  partOfSpeech: String;
+  workBookId: number;
 };
 
 type AnswerResult = {
@@ -25,14 +26,19 @@ const WordTestPage = () => {
   const [userInput, setUserInput] = useState("");
   const [answers, setAnswers] = useState<AnswerResult[]>([]);
   const [showCaution, setShowCaution] = useState(false); // 🚨 경고 메시지 상태 추가
+  const token = sessionStorage.getItem("accessToken");
 
   const navigate = useNavigate();
 
   const { id } = useParams(); // 워크북 ID
 
   useEffect(() => {
-    axios
-      .get(`http://localhost:8080/api/workbook/${id}`)
+    vocaServerNeedAuth
+      .get(`/api/workbook/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
       .then((res) => {
         setWorkbookName(res.data.title);
         setWords(res.data.wordList);
@@ -40,62 +46,60 @@ const WordTestPage = () => {
       .catch((err) => console.error("단어장 로딩 실패:", err));
   }, [id]);
   useEffect(() => {
-  if (answers.length === words.length && words.length > 0) {
-    submitResults();
-  }
-}, [answers]);
-
-
-const handleNext = () => {
-  if (userInput.trim() === "") {
-    console.log(userInput);
-    console.log(currentIndex);
-    setShowCaution(true);
-    setTimeout(() => setShowCaution(false), 2000);
-    return;
-  }
-
-  if (currentIndex >= words.length) {
-    return; // 방어 코드: 더 이상 진행하지 않도록
-  }
-
-  const currentWord = words[currentIndex];
-  console.log("currentword : ", currentWord);
-  console.log("userInput : ", userInput);
-
-  if (!currentWord) {
-    console.warn("currentWord is undefined at index", currentIndex);
-    return;
-  }
-
-  const isCorrect =
-    userInput.trim().toLowerCase() === currentWord.content.toLowerCase();
-
-  // 단어 내용과 정답 여부를 DTO에 맞게 설정
-  setAnswers((prev) => [
-    ...prev,
-    {
-      wordId: currentWord.wordId,     // 단어 ID
-      content: currentWord.content,       // 단어 내용
-      answer: isCorrect                // 정답 여부
+    if (answers.length === words.length && words.length > 0) {
+      submitResults();
     }
-  ]);
+  }, [answers]);
 
-  setUserInput("");
-  console.log("currentword2 : ", currentWord);
-  console.log("userInput2 : ", userInput);
+  const handleNext = () => {
+    if (userInput.trim() === "") {
+      console.log(userInput);
+      console.log(currentIndex);
+      setShowCaution(true);
+      setTimeout(() => setShowCaution(false), 2000);
+      return;
+    }
 
-  // 마지막 단어일 경우 answers를 submit하도록
-  if (currentIndex + 1 < words.length) {
-    setCurrentIndex(currentIndex + 1);
-  } else {
-    console.log(answers);
-    // 마지막 단어였을 때: answers를 업데이트한 후 제출
-    // 이 부분에서 제출 처리를 해야 할 수 있습니다.
-    // 예를 들어, useEffect를 사용하여 submit을 트리거할 수 있습니다.
-  }
-};
+    if (currentIndex >= words.length) {
+      return; // 방어 코드: 더 이상 진행하지 않도록
+    }
 
+    const currentWord = words[currentIndex];
+    console.log("currentword : ", currentWord);
+    console.log("userInput : ", userInput);
+
+    if (!currentWord) {
+      console.warn("currentWord is undefined at index", currentIndex);
+      return;
+    }
+
+    const isCorrect =
+      userInput.trim().toLowerCase() === currentWord.content.toLowerCase();
+
+    // 단어 내용과 정답 여부를 DTO에 맞게 설정
+    setAnswers((prev) => [
+      ...prev,
+      {
+        wordId: currentWord.wordId, // 단어 ID
+        content: currentWord.content, // 단어 내용
+        answer: isCorrect, // 정답 여부
+      },
+    ]);
+
+    setUserInput("");
+    console.log("currentword2 : ", currentWord);
+    console.log("userInput2 : ", userInput);
+
+    // 마지막 단어일 경우 answers를 submit하도록
+    if (currentIndex + 1 < words.length) {
+      setCurrentIndex(currentIndex + 1);
+    } else {
+      console.log(answers);
+      // 마지막 단어였을 때: answers를 업데이트한 후 제출
+      // 이 부분에서 제출 처리를 해야 할 수 있습니다.
+      // 예를 들어, useEffect를 사용하여 submit을 트리거할 수 있습니다.
+    }
+  };
 
   const submitResults = async () => {
     try {
@@ -108,16 +112,15 @@ const handleNext = () => {
         {
           headers: {
             Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json"
-          }
+            "Content-Type": "application/json",
+          },
         }
       );
 
+      console.log(wrongAnswers);
       alert("제출이 완료되었습니다!");
 
-      navigate("/workbooks")
-      
-
+      navigate(`/workbook/${id}`);
     } catch (err) {
       console.error("제출 실패", err);
       alert("서버 제출에 실패했습니다.");
@@ -164,7 +167,11 @@ const handleNext = () => {
           </button>
           <button
             onClick={handleNext}
-            style={{ ...styles.button, backgroundColor: "#4CAF50", color: "white" }}
+            style={{
+              ...styles.button,
+              backgroundColor: "#4CAF50",
+              color: "white",
+            }}
           >
             다음
           </button>
@@ -182,7 +189,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     minHeight: "93vh",
     minWidth: "100vw",
     backgroundColor: "#f0f2f5",
-    position: "relative"
+    position: "relative",
   },
   caution: {
     position: "absolute",
@@ -194,7 +201,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     fontWeight: "bold",
     fontSize: "16px",
     zIndex: 999,
-    transition: "opacity 0.3s ease-in-out"
+    transition: "opacity 0.3s ease-in-out",
   },
   card: {
     width: "400px",
@@ -202,24 +209,24 @@ const styles: { [key: string]: React.CSSProperties } = {
     padding: "40px",
     borderRadius: "16px",
     boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
-    textAlign: "center"
+    textAlign: "center",
   },
   title: {
     fontSize: "28px",
-    marginBottom: "10px"
+    marginBottom: "10px",
   },
   subtitle: {
     color: "#888",
-    marginBottom: "20px"
+    marginBottom: "20px",
   },
   progress: {
     fontSize: "18px",
-    marginBottom: "15px"
+    marginBottom: "15px",
   },
   meaning: {
     fontSize: "32px",
     fontWeight: "bold",
-    margin: "30px 0"
+    margin: "30px 0",
   },
   input: {
     width: "100%",
@@ -229,11 +236,11 @@ const styles: { [key: string]: React.CSSProperties } = {
     borderRadius: "8px",
     outline: "none",
     boxSizing: "border-box",
-    marginBottom: "20px"
+    marginBottom: "20px",
   },
   buttonContainer: {
     display: "flex",
-    justifyContent: "space-between"
+    justifyContent: "space-between",
   },
   button: {
     padding: "10px 20px",
@@ -241,8 +248,8 @@ const styles: { [key: string]: React.CSSProperties } = {
     border: "none",
     borderRadius: "8px",
     cursor: "pointer",
-    transition: "background-color 0.2s"
-  }
+    transition: "background-color 0.2s",
+  },
 };
 
 export default WordTestPage;
