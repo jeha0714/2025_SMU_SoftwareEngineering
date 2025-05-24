@@ -27,6 +27,12 @@ export default function CreateWorkBook() {
     return !specialCharRegex.test(name);
   };
 
+  const validateWorkbookDescription = (desc: string) => {
+    // 특수문자 검사
+    const specialCharRegex = /[^\w\s가-힣.!_]/;
+    return !specialCharRegex.test(desc);
+  };
+
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setWorkbookName(value);
@@ -40,9 +46,34 @@ export default function CreateWorkBook() {
     }
   };
 
+  const handleDescriptionChange = (
+    e: React.ChangeEvent<HTMLTextAreaElement>
+  ) => {
+    const value = e.target.value;
+    setWorkbookDescription(value);
+
+    if (value && !validateWorkbookDescription(value)) {
+      setError(
+        "단어장 설명에는 !_와 공백 이외의 특수문자를 사용할 수 없습니다."
+      );
+    } else {
+      setError("");
+    }
+  };
+
   const handleCreateWorkbook = async () => {
     if (!workbookName.trim()) {
       setError("단어장 이름을 입력해주세요.");
+      return;
+    } else if (!workbookDescription.trim()) {
+      setError("단어장 설명을 작성해주세요.");
+      return;
+    }
+
+    if (!validateWorkbookName(workbookName)) {
+      setError(
+        "단어장 이름에는 공백과 언더스코어(_) 이외의 특수문자를 사용할 수 없습니다."
+      );
       return;
     }
 
@@ -81,7 +112,7 @@ export default function CreateWorkBook() {
   };
 
   return (
-    <article className="w-full h-full p-8 bg-slate-200">
+    <article className="w-full h-full p-8 bg-slate-200 flex justify-center items-center">
       <div className="w-full max-w-2xl mx-auto p-8 bg-white rounded-3xl shadow-lg">
         {" "}
         <h1 className="text-2xl font-bold text-center mb-8 text-gray-800">
@@ -109,7 +140,7 @@ export default function CreateWorkBook() {
             </label>
             <textarea
               value={workbookDescription}
-              onChange={(e) => setWorkbookDescription(e.target.value)}
+              onChange={handleDescriptionChange}
               className="w-full px-4 py-3 border-2 border-purple-300 rounded-xl focus:border-purple-500 focus:outline-none text-lg resize-none h-24 overflow-y-auto"
               placeholder="단어장에 대한 설명을 입력하세요"
             />

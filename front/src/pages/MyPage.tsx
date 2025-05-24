@@ -34,7 +34,7 @@ export default function MyPage() {
       </div>
 
       {/* 콘텐츠 섹션 */}
-      <section className="w-full max-w-[750px] flex-1 bg-white rounded-xl shadow-lg overflow-hidden">
+      <section className="w-full max-w-[850px] flex-1 bg-white rounded-xl shadow-lg overflow-hidden">
         {activeTab !== "calendar" ? (
           <div className="h-full">
             <MyInfo />

@@ -33,7 +33,7 @@ type WorkBook = {
 
 export default function Sidebar() {
   const [openMenus, setOpenMenus] = useState<Record<string, boolean>>({});
-  const [activeItem, setActiveItem] = useState<string>("");
+  const [activeItem, setActiveItem] = useState<number | null>(null);
   const navigate = useNavigate();
 
   // useQuery로 데이터 패칭
@@ -50,27 +50,12 @@ export default function Sidebar() {
   };
 
   const handleItemClick = (workbook: WorkBook) => {
-    setActiveItem(workbook.title);
+    setActiveItem(workbook.id);
     navigate(`/workbook/${workbook.id}`);
   };
 
   const handleCreateWorkbook = () => {
     navigate("/workbook/create");
-  };
-
-  const renderIcon = (name: string) => {
-    switch (name) {
-      case "수능":
-        return <GraduationCap size={18} />;
-      case "토플":
-        return <Globe size={18} />;
-      case "토익":
-        return <BookOpen size={18} />;
-      case "기타":
-        return <MoreHorizontal size={18} />;
-      default:
-        return null;
-    }
   };
 
   // workbooks를 카테고리별로 그룹화
@@ -92,6 +77,21 @@ export default function Sidebar() {
     name: category,
     submenu: groupedWorkbooks[category] || [],
   }));
+
+  const renderIcon = (name: string) => {
+    switch (name) {
+      case "수능":
+        return <GraduationCap size={18} />;
+      case "토플":
+        return <Globe size={18} />;
+      case "토익":
+        return <BookOpen size={18} />;
+      case "기타":
+        return <MoreHorizontal size={18} />;
+      default:
+        return null;
+    }
+  };
 
   if (loading) return <div className="p-4 text-gray-600">불러오는 중...</div>;
 
@@ -123,14 +123,14 @@ export default function Sidebar() {
                     key={subItem.id}
                     onClick={() => handleItemClick(subItem)}
                     className={`w-full flex items-center px-6 py-3 hover:bg-gray-100 transition-colors text-left ${
-                      activeItem === subItem.title
+                      activeItem === subItem.id
                         ? "text-indigo-600 bg-indigo-50 font-medium"
                         : "text-gray-600"
                     }`}
                   >
                     <div className="flex items-center gap-2">
                       <span className="inline-flex w-4 h-4 items-center justify-center flex-shrink-0">
-                        {activeItem === subItem.title ? (
+                        {activeItem === subItem.id ? (
                           <ChevronRight size={16} className="text-indigo-600" />
                         ) : (
                           <Dot className="text-gray-600" />

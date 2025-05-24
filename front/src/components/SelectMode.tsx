@@ -14,6 +14,21 @@ const SelectMode = () => {
     enabled: !!id,
   });
 
+  const handleWorkBookStudy = () => {
+    if (data.wordList.length > 0) navigate(`/workbook/${id}/study`);
+    else alert("단어장에 단어가 하나이상 존재해야합니다!");
+  };
+
+  const handleWorkBookTest = () => {
+    if (data.wordList.length > 0) navigate(`/workbook/${id}/test`);
+    else alert("단어장에 단어가 하나이상 존재해야합니다!");
+  };
+
+  const handleWrongWorkBook = () => {
+    if (data.wrong) navigate(`/workbook/${id}/wrong`);
+    else alert("테스트에서 틀린 부분이 존재할 시 오답 단어장이 생성됩니다!");
+  };
+
   if (isLoading) return <div>불러오는 중...</div>;
 
   return (
@@ -29,13 +44,15 @@ const SelectMode = () => {
         {/* 첫 번째 행: 학습모드, 테스트모드 버튼 */}
         <div className="grid grid-cols-2 gap-4 mb-4">
           <button
-            onClick={() => navigate(`/workbook/${id}/study`)}
+            // onClick={() => navigate(`/workbook/${id}/study`)}
+            onClick={handleWorkBookStudy}
             className="h-24 sm:h-28 md:h-32 bg-gradient-to-br from-pink-200 to-pink-300 hover:from-pink-300 hover:to-pink-400 text-gray-700 font-semibold text-lg sm:text-xl rounded-xl shadow-md hover:shadow-lg transform hover:scale-105 active:scale-95 transition-all duration-200"
           >
             학습모드
           </button>
           <button
-            onClick={() => navigate(`/workbook/${id}/test`)}
+            // onClick={() => navigate(`/workbook/${id}/test`)}
+            onClick={handleWorkBookTest}
             className="h-24 sm:h-28 md:h-32 bg-gradient-to-br from-blue-200 to-blue-300 hover:from-blue-300 hover:to-blue-400 text-gray-700 font-semibold text-lg sm:text-xl rounded-xl shadow-md hover:shadow-lg transform hover:scale-105 active:scale-95 transition-all duration-200"
           >
             테스트모드
@@ -45,7 +62,7 @@ const SelectMode = () => {
         {/* 두 번째 행: 오답모드 버튼 */}
         <div className="grid grid-cols-2 gap-4 mb-4">
           <button
-            onClick={() => navigate(`/workbook/${id}/wrong`)}
+            onClick={handleWrongWorkBook}
             className="w-full h-24 sm:h-28 md:h-32 bg-gradient-to-br from-purple-200 to-purple-300 hover:from-purple-300 hover:to-purple-400 text-gray-700 font-semibold text-lg sm:text-xl rounded-xl shadow-md hover:shadow-lg transform hover:scale-105 active:scale-95 transition-all duration-200"
           >
             오답모드

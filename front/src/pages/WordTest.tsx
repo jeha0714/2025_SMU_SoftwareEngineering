@@ -9,7 +9,7 @@ type Word = {
   wordId: number;
   content: string;
   meaning: string;
-  partOfSpeech: String;
+  partOfSpeech: string;
   workBookId: number;
 };
 
