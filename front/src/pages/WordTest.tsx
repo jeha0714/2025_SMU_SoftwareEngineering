@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 
 import axios from "axios";
 
@@ -24,6 +25,8 @@ const WordTestPage = () => {
   const [userInput, setUserInput] = useState("");
   const [answers, setAnswers] = useState<AnswerResult[]>([]);
   const [showCaution, setShowCaution] = useState(false); // 🚨 경고 메시지 상태 추가
+
+  const navigate = useNavigate();
 
   const { id } = useParams(); // 워크북 ID
 
@@ -111,6 +114,10 @@ const handleNext = () => {
       );
 
       alert("제출이 완료되었습니다!");
+
+      navigate("/workbooks")
+      
+
     } catch (err) {
       console.error("제출 실패", err);
       alert("서버 제출에 실패했습니다.");

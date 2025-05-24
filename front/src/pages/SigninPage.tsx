@@ -91,7 +91,7 @@ export default function SigninPage() {
 
       onSuccess: (response) => {
         console.log(response);
-        const accessToken = response.data.jwtToken; // jwtToken은 문자열임
+        const accessToken = response.data.result.jwtToken; // jwtToken은 문자열임
         console.log(accessToken);
         sessionStorage.setItem("accessToken", accessToken);
         login();

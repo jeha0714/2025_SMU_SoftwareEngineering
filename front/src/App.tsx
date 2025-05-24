@@ -12,6 +12,7 @@ import WordTestPage from "./pages/WordTest";
 import WorkbookList from "./pages/WorkBookListPage";
 import WorkBookDetailPage from './pages/WorkBookDetailPage';
 
+
 const router = createBrowserRouter([
   {
     path: "/",
@@ -71,8 +72,7 @@ const router = createBrowserRouter([
       {
         path: "/wrongworkbooks/:id",
         element: <WorkBookDetailPage/>, // ✅ 새로 추가된 부분
-      },
-      
+      }
     ],
   },
 ]);
