@@ -1,25 +1,37 @@
-import { umcServerNeedAuth, umcServerNoAuth } from "./axiosInfo";
+import { vocaServerNeedAuth } from "./axiosInfo";
 
-// get data which current log user's data
-export const fecthUser = async () => {
-  const { data } = await umcServerNeedAuth.get("/v1/users/me");
+export const fetchWorkBookList = async () => {
+  const token = sessionStorage.getItem("accessToken");
 
-  return data;
-};
-
-export const fetchLpList = async (order: string) => {
-  const { data } = await umcServerNoAuth.get("/v1/lps", {
-    params: {
-      order: order,
-      limit: "100",
-    },
+  const res = await vocaServerNeedAuth.get("/api/workbook", {
+    headers: { Authorization: `Bearer ${token}` },
   });
-
-  return data;
+  return res.data;
 };
 
-export const fetchLpDetail = async (Lpid: string) => {
-  const { data } = await umcServerNoAuth.get(`/v1/lps/${Lpid}`);
+export const fetchWorkBookMode = async (id: string | undefined) => {
+  const token = sessionStorage.getItem("accessToken");
 
-  return data;
+  const res = await vocaServerNeedAuth.get(`/api/workbook/${id}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  console.log(res);
+  return res.data;
+};
+
+export const createWorkbook = async (workbookData: {
+  title: string;
+  description: string;
+  category: string;
+}) => {
+  const token = sessionStorage.getItem("accessToken");
+  console.log(workbookData);
+  const res = await vocaServerNeedAuth.post(
+    "/api/workbook/create-gpt",
+    workbookData,
+    {
+      headers: { Authorization: `Bearer ${token}` },
+    }
+  );
+  return res.data;
 };

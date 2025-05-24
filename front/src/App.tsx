@@ -9,6 +9,10 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import WelcomePage from "./pages/WelcomePage";
 import SelectMode from "./components/SelectMode";
+import WordTestPage from "./pages/WordTest";
+import WorkBookDetailPage from "./pages/WorkBookDetailPage";
+import CreateWorkBook from "./pages/CreateWorkBook";
+import ModifyWorkBook from "./pages/ModifyWorkBook";
 
 const router = createBrowserRouter([
   {
@@ -36,11 +40,40 @@ const router = createBrowserRouter([
             element: <MyPage />,
           },
           {
-            path: "/wordbook/:id",
+            path: "/workbook/create",
+            element: <CreateWorkBook />,
+          },
+          {
+            path: "/workbook/:id",
             element: <SelectMode />,
+          },
+          {
+            path: "/workbook/:id/modify",
+            element: <ModifyWorkBook />,
+          },
+          {
+            path: "/workbook/:id/study",
+            element: <WorkBookDetailPage />, // ✅ 새로 추가된 부분
+          },
+          {
+            path: "/workbook/:id/test",
+            element: <WordTestPage />,
+          },
+          // {
+          //   path: "/wrongworkbooks/:id",
+          //   element: <WorkBookDetailPage />, // ✅ 새로 추가된 부분
+          // },
+          {
+            // path: "/wrongworkbooks/:id",
+            path: "/workbook/:id/wrong",
+            element: <WorkBookDetailPage wrong={true} />, // ✅ 새로 추가된 부분
           },
         ],
       },
+      // {
+      //   path: "/test",
+      //   element: <WordTestPage />,
+      // },
     ],
   },
 ]);

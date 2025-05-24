@@ -1,14 +1,33 @@
 import { useState, useEffect } from "react";
 import { BookOpen, User, TrendingUp } from "lucide-react";
+import axios from "axios";
 
 export default function MyInfo() {
   // 임시 데이터 (실제로는 API나 상태 관리 라이브러리에서 가져올 예정)
   const [userInfo, setUserInfo] = useState({
-    nickname: "영어마스터",
-    id: "english_learner_2024",
-    todayWords: 45,
-    totalWords: 1234,
+    userId: "",
+    userName: "",
+    todayWordCount: 0,
+    allWordCount: 0,
   });
+
+  useEffect(() => {
+    const token = sessionStorage.getItem("accessToken"); // 저장된 토큰 꺼내기
+
+    axios
+      .get("http://localhost:8080/users/my", {
+        headers: {
+          Authorization: `Bearer ${token}`, // 헤더에 토큰 포함
+        },
+      })
+      .then((response) => {
+        // console.log(response.data.result);
+        setUserInfo(response.data.result);
+      })
+      .catch((error) => {
+        console.error("유저 정보 불러오기 실패:", error);
+      });
+  }, []);
 
   return (
     <div className="w-full h-full flex flex-col p-6 bg-gradient-to-br from-blue-50 to-white">
@@ -20,9 +39,9 @@ export default function MyInfo() {
           </div>
           <div className="text-center">
             <h2 className="text-2xl font-bold text-gray-800">
-              {userInfo.nickname}
+              {userInfo.userName}
             </h2>
-            <p className="text-gray-500 text-sm">@{userInfo.id}</p>
+            <p className="text-gray-500 text-sm">@{userInfo.userId}</p>
           </div>
         </div>
 
@@ -41,7 +60,7 @@ export default function MyInfo() {
           </div>
           <div className="flex items-center justify-between bg-green-50 rounded-lg p-3">
             <span className="text-lg font-bold text-green-700">
-              {userInfo.todayWords}개
+              {userInfo.todayWordCount}개
             </span>
             <TrendingUp size={24} className="text-green-500" />
           </div>
@@ -62,7 +81,7 @@ export default function MyInfo() {
           </div>
           <div className="flex items-center justify-between bg-purple-50 rounded-lg p-3">
             <span className="text-lg font-bold text-purple-700">
-              {userInfo.totalWords}개
+              {userInfo.allWordCount}개
             </span>
             <TrendingUp size={24} className="text-purple-500" />
           </div>

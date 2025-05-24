@@ -88,14 +88,14 @@ export default function SigninPage() {
         userId: data.id,
         userPassword: data.password,
       }),
+
     onSuccess: (response) => {
-      console.log(response);
-      const { accessToken } = response.data.jwtToken; // 백엔드 응답 구조에 맞게 조정 필요
+      const accessToken = response.data.jwtToken; // jwtToken은 문자열임
       sessionStorage.setItem("accessToken", accessToken);
       login();
       navigate("/");
     },
-    onError: (error: AxiosError<{ message: string }>) => {
+    onError: (error: AxiosError<{ status: number }>) => {
       console.error("Login failed:", error);
       setStatusError("ID 또는 비밀번호가 틀렸습니다.");
     },

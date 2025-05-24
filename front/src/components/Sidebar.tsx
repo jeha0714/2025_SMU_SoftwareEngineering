@@ -9,13 +9,38 @@ import {
   BookOpen,
   MoreHorizontal,
   Dot,
+  Plus,
 } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { fetchWorkBookList } from "../utils/funcFetch";
+
+type WorkBookCategory = "SUNEUNG" | "TOEIC" | "TOEFL" | "ETC";
+
+const categoryNameMap: Record<WorkBookCategory, string> = {
+  SUNEUNG: "수능",
+  TOEIC: "토익",
+  TOEFL: "토플",
+  ETC: "기타",
+};
+
+type WorkBook = {
+  id: number;
+  title: string;
+  description: string;
+  category: WorkBookCategory;
+  creatorName: string;
+};
 
 export default function Sidebar() {
   const [openMenus, setOpenMenus] = useState<Record<string, boolean>>({});
-
   const [activeItem, setActiveItem] = useState<string>("");
   const navigate = useNavigate();
+
+  // useQuery로 데이터 패칭
+  const { data: workbooks = [], isLoading: loading } = useQuery<WorkBook[]>({
+    queryKey: ["workbooks"],
+    queryFn: fetchWorkBookList,
+  });
 
   const toggleMenu = (menu: string) => {
     setOpenMenus((prev) => ({
@@ -24,9 +49,13 @@ export default function Sidebar() {
     }));
   };
 
-  const handleItemClick = (item: string) => {
-    setActiveItem(item);
-    navigate(`/wordbook/${encodeURIComponent(item)}`);
+  const handleItemClick = (workbook: WorkBook) => {
+    setActiveItem(workbook.title);
+    navigate(`/workbook/${workbook.id}`);
+  };
+
+  const handleCreateWorkbook = () => {
+    navigate("/workbook/create");
   };
 
   const renderIcon = (name: string) => {
@@ -44,41 +73,31 @@ export default function Sidebar() {
     }
   };
 
-  const menuItems = [
-    {
-      name: "수능",
-      submenu: [
-        "토익 기본",
-        "토익 심화",
-        "토익 심화",
-        "토익 심화",
-        "토익 심화",
-        "토익 심화",
-        "토익 심화",
-        "토익 심화",
-        "토익 심화",
-        "토익 심화",
-        "토익 심화",
-        "토익 심화",
-      ],
+  // workbooks를 카테고리별로 그룹화
+  const groupedWorkbooks = workbooks.reduce<Record<string, WorkBook[]>>(
+    (acc, wb) => {
+      const category = categoryNameMap[wb.category];
+      if (!acc[category]) acc[category] = [];
+      acc[category].push(wb);
+      return acc;
     },
-    {
-      name: "토플",
-      submenu: ["토익 기본", "토익 심화"],
-    },
-    {
-      name: "토익",
-      submenu: ["토익 기본", "토익 심화"],
-    },
-    {
-      name: "기타",
-      submenu: ["비지니스 기본 이래용 과연 그럴까요? 후후하하하", "일상 영어"],
-    },
-  ];
+    {}
+  );
+
+  // 모든 카테고리를 항상 메뉴에 표시
+  const allCategories = Object.values(categoryNameMap);
+
+  // menuItems를 WorkBook 객체 배열로 변경
+  const menuItems = allCategories.map((category) => ({
+    name: category,
+    submenu: groupedWorkbooks[category] || [],
+  }));
+
+  if (loading) return <div className="p-4 text-gray-600">불러오는 중...</div>;
 
   return (
-    <aside className="w-full h-full bg-white shadow-lg  overflow-y-auto border border-gray-200">
-      <div className="py-2">
+    <aside className="w-full h-full bg-white shadow-lg border border-gray-200 flex flex-col">
+      <div className="py-2 flex-1 overflow-y-auto">
         {menuItems.map((item) => (
           <div key={item.name} className="mb-2">
             <button
@@ -101,23 +120,23 @@ export default function Sidebar() {
               <div className="flex flex-col bg-gray-50">
                 {item.submenu.map((subItem) => (
                   <button
-                    key={subItem}
+                    key={subItem.id}
                     onClick={() => handleItemClick(subItem)}
                     className={`w-full flex items-center px-6 py-3 hover:bg-gray-100 transition-colors text-left ${
-                      activeItem === subItem
+                      activeItem === subItem.title
                         ? "text-indigo-600 bg-indigo-50 font-medium"
                         : "text-gray-600"
                     }`}
                   >
                     <div className="flex items-center gap-2">
                       <span className="inline-flex w-4 h-4 items-center justify-center flex-shrink-0">
-                        {activeItem === subItem ? (
+                        {activeItem === subItem.title ? (
                           <ChevronRight size={16} className="text-indigo-600" />
                         ) : (
                           <Dot className="text-gray-600" />
                         )}
                       </span>
-                      <span>{subItem}</span>
+                      <span>{subItem.title}</span>
                     </div>
                   </button>
                 ))}
@@ -125,6 +144,17 @@ export default function Sidebar() {
             )}
           </div>
         ))}
+      </div>
+
+      {/* 단어장 생성 버튼 */}
+      <div className="border-t border-gray-200 p-4">
+        <button
+          onClick={handleCreateWorkbook}
+          className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-medium transition-colors"
+        >
+          <Plus size={18} />
+          <span>단어장 생성</span>
+        </button>
       </div>
     </aside>
   );
