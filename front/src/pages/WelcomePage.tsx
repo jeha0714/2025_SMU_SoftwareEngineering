@@ -9,7 +9,7 @@ export default function WelcomePage() {
       {/* 히어로 섹션 */}
       <div className="max-w-6xl mx-auto px-6 py-16 md:py-24">
         <div className="flex flex-col md:flex-row items-center">
-          <div className="md:w-1/2 mb-12 md:mb-0">
+          <div className="md:w-1/2 mb-12 md:mb-0 md:pl-10">
             <h1 className="text-4xl md:text-5xl font-bold text-gray-900 leading-tight mb-6">
               <span className="text-indigo-600">AI 기반</span> 맞춤형 영어
               단어장으로

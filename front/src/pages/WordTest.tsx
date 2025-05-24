@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-
 import axios from "axios";
 import { vocaServerNeedAuth } from "../utils/axiosInfo";
 
@@ -25,13 +24,10 @@ const WordTestPage = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [userInput, setUserInput] = useState("");
   const [answers, setAnswers] = useState<AnswerResult[]>([]);
-  const [showCaution, setShowCaution] = useState(false); // 🚨 경고 메시지 상태 추가
+  const [showCaution, setShowCaution] = useState(false); // :경광등: 경고 메시지 상태 추가
   const token = sessionStorage.getItem("accessToken");
-
   const navigate = useNavigate();
-
   const { id } = useParams(); // 워크북 ID
-
   useEffect(() => {
     vocaServerNeedAuth
       .get(`/api/workbook/${id}`, {
@@ -48,9 +44,9 @@ const WordTestPage = () => {
   useEffect(() => {
     if (answers.length === words.length && words.length > 0) {
       submitResults();
+      checkInAttendance();
     }
   }, [answers]);
-
   const handleNext = () => {
     if (userInput.trim() === "") {
       console.log(userInput);
@@ -59,23 +55,18 @@ const WordTestPage = () => {
       setTimeout(() => setShowCaution(false), 2000);
       return;
     }
-
     if (currentIndex >= words.length) {
       return; // 방어 코드: 더 이상 진행하지 않도록
     }
-
     const currentWord = words[currentIndex];
     console.log("currentword : ", currentWord);
     console.log("userInput : ", userInput);
-
     if (!currentWord) {
       console.warn("currentWord is undefined at index", currentIndex);
       return;
     }
-
     const isCorrect =
       userInput.trim().toLowerCase() === currentWord.content.toLowerCase();
-
     // 단어 내용과 정답 여부를 DTO에 맞게 설정
     setAnswers((prev) => [
       ...prev,
@@ -85,11 +76,9 @@ const WordTestPage = () => {
         answer: isCorrect, // 정답 여부
       },
     ]);
-
     setUserInput("");
     console.log("currentword2 : ", currentWord);
     console.log("userInput2 : ", userInput);
-
     // 마지막 단어일 경우 answers를 submit하도록
     if (currentIndex + 1 < words.length) {
       setCurrentIndex(currentIndex + 1);
@@ -100,12 +89,44 @@ const WordTestPage = () => {
       // 예를 들어, useEffect를 사용하여 submit을 트리거할 수 있습니다.
     }
   };
-
+  const checkInAttendance = async () => {
+    const token = sessionStorage.getItem("accessToken");
+    if (!token) {
+      console.warn("토큰 없음: 출석 요청 생략");
+      return;
+    }
+    try {
+      const response = await axios.post(
+        "http://localhost:8080/api/attendance/check-in",
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      const data = response.data;
+      if (data.isSuccess) {
+        console.log("출석 체크 성공:", data.message);
+      } else {
+        console.warn("출석 체크 실패:", data.message);
+      }
+    } catch (error: any) {
+      if (error.response) {
+        console.error(
+          "출석 요청 오류:",
+          error.response.status,
+          error.response.data.message
+        );
+      } else {
+        console.error("출석 요청 실패:", error.message);
+      }
+    }
+  };
   const submitResults = async () => {
     try {
       const token = sessionStorage.getItem("accessToken");
       const wrongAnswers = answers.filter((item) => !item.answer);
-
       await axios.post(
         `http://localhost:8080/api/workbook/submit?workBookId=${id}`, // workBookId를 쿼리 파라미터로 전달
         wrongAnswers,
@@ -116,34 +137,28 @@ const WordTestPage = () => {
           },
         }
       );
-
       console.log(wrongAnswers);
       alert("제출이 완료되었습니다!");
-
       navigate(`/workbook/${id}`);
     } catch (err) {
       console.error("제출 실패", err);
       alert("서버 제출에 실패했습니다.");
     }
   };
-
   if (words.length === 0) return <div>로딩 중...</div>;
-
   return (
     <div style={styles.container}>
-      {/* 🚨 경고 메시지 표시 */}
-      {showCaution && <div style={styles.caution}>⚠️ 단어를 입력해주세요</div>}
-
+      {/* :경광등: 경고 메시지 표시 */}
+      {showCaution && (
+        <div style={styles.caution}>:경고: 단어를 입력해주세요</div>
+      )}
       <div style={styles.card}>
         <h2 style={styles.title}>{workbookName || "단어장"}</h2>
         <p style={styles.subtitle}>테스트 모드</p>
-
         <div style={styles.progress}>
-          🏅 {currentIndex + 1}/{words.length}
+          :스포츠_메달: {currentIndex + 1}/{words.length}
         </div>
-
         <div style={styles.meaning}>{words[currentIndex].meaning}</div>
-
         <input
           type="text"
           value={userInput}
@@ -157,11 +172,10 @@ const WordTestPage = () => {
           placeholder="영어 단어 입력"
           style={styles.input}
         />
-
         <div style={styles.buttonContainer}>
           <button
             onClick={() => setCurrentIndex(Math.max(0, currentIndex - 1))}
-            style={{ ...styles.button, backgroundColor: "#d3d3d3" }}
+            style={{ ...styles.button, backgroundColor: "#D3D3D3" }}
           >
             이전
           </button>
@@ -180,7 +194,6 @@ const WordTestPage = () => {
     </div>
   );
 };
-
 const styles: { [key: string]: React.CSSProperties } = {
   container: {
     display: "flex",
@@ -188,14 +201,14 @@ const styles: { [key: string]: React.CSSProperties } = {
     alignItems: "center",
     minHeight: "93vh",
     minWidth: "100vw",
-    backgroundColor: "#f0f2f5",
+    backgroundColor: "#F0F2F5",
     position: "relative",
   },
   caution: {
     position: "absolute",
     top: "10%",
-    backgroundColor: "#ffe5e5",
-    color: "#cc0000",
+    backgroundColor: "#FFE5E5",
+    color: "#CC0000",
     padding: "10px 20px",
     borderRadius: "8px",
     fontWeight: "bold",
@@ -251,5 +264,4 @@ const styles: { [key: string]: React.CSSProperties } = {
     transition: "background-color 0.2s",
   },
 };
-
 export default WordTestPage;
