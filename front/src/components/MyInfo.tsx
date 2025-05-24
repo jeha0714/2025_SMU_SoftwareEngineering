@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { BookOpen, User, TrendingUp } from "lucide-react";
-import axios from "axios";
+import { vocaServerNeedAuth } from "../utils/axiosInfo";
 
 export default function MyInfo() {
   // 임시 데이터 (실제로는 API나 상태 관리 라이브러리에서 가져올 예정)
@@ -14,14 +14,14 @@ export default function MyInfo() {
   useEffect(() => {
     const token = sessionStorage.getItem("accessToken"); // 저장된 토큰 꺼내기
 
-    axios
-      .get("http://localhost:8080/users/my", {
+    vocaServerNeedAuth
+      .get("/users/my", {
         headers: {
           Authorization: `Bearer ${token}`, // 헤더에 토큰 포함
         },
       })
       .then((response) => {
-        // console.log(response.data.result);
+        console.log(response.data.result);
         setUserInfo(response.data.result);
       })
       .catch((error) => {

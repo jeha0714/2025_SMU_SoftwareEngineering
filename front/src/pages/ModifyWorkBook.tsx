@@ -40,6 +40,7 @@ const ModifyWorkBook = () => {
   const [showDescModal, setShowDescModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showDeleteWorkbookModal, setShowDeleteWorkbookModal] = useState(false);
+  const [showAddWordModal, setShowAddWordModal] = useState(false);
   const [deleteWordIndex, setDeleteWordIndex] = useState<number | null>(null);
 
   const [editTitle, setEditTitle] = useState("");
@@ -57,6 +58,7 @@ const ModifyWorkBook = () => {
   const descModalRef = useRef<HTMLDivElement>(null);
   const deleteModalRef = useRef<HTMLDivElement>(null);
   const deleteWorkbookModalRef = useRef<HTMLDivElement>(null);
+  const addWordModalRef = useRef<HTMLDivElement>(null);
 
   // fetchedWorkbook이 변경될 때마다 로컬 상태 업데이트
   useEffect(() => {
@@ -91,6 +93,12 @@ const ModifyWorkBook = () => {
       deleteWorkbookModalRef.current.focus();
     }
   }, [showDeleteWorkbookModal]);
+
+  useEffect(() => {
+    if (showAddWordModal && addWordModalRef.current) {
+      addWordModalRef.current.focus();
+    }
+  }, [showAddWordModal]);
 
   const handleTitleSave = () => {
     if (!workbook) return;
@@ -163,7 +171,7 @@ const ModifyWorkBook = () => {
 
   const handleAddWord = () => {
     if (!workbook) return;
-
+     
     const newWord: Word = {
       wordId: null,
       content: "",
@@ -616,6 +624,103 @@ const ModifyWorkBook = () => {
                   className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors"
                 >
                   삭제
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Add Word Modal */}
+      {showAddWordModal && (
+        <div
+          ref={addWordModalRef}
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              handleAddWordSave();
+            }
+          }}
+        >
+          <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
+            <h3 className="text-lg font-semibold mb-4">단어 추가</h3>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleAddWordSave();
+              }}
+            >
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    단어
+                  </label>
+                  <input
+                    type="text"
+                    value={editingWord.content}
+                    onChange={(e) =>
+                      setEditingWord((prev) => ({
+                        ...prev,
+                        content: e.target.value,
+                      }))
+                    }
+                    placeholder="단어를 입력하세요"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    의미
+                  </label>
+                  <input
+                    type="text"
+                    value={editingWord.meaning}
+                    onChange={(e) =>
+                      setEditingWord((prev) => ({
+                        ...prev,
+                        meaning: e.target.value,
+                      }))
+                    }
+                    placeholder="의미를 입력하세요"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    품사
+                  </label>
+                  <select
+                    value={editingWord.partOfSpeech}
+                    onChange={(e) =>
+                      setEditingWord((prev) => ({
+                        ...prev,
+                        partOfSpeech: e.target.value,
+                      }))
+                    }
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  >
+                    <option value="noun">명사</option>
+                    <option value="verb">동사</option>
+                    <option value="adjective">형용사</option>
+                    <option value="adverb">부사</option>
+                  </select>
+                </div>
+              </div>
+              <div className="flex gap-3 justify-end mt-6">
+                <button
+                  type="button"
+                  onClick={() => setShowAddWordModal(false)}
+                  className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+                >
+                  취소
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors"
+                >
+                  추가
                 </button>
               </div>
             </form>
