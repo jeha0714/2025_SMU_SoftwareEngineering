@@ -48,23 +48,18 @@ const router = createBrowserRouter([
             element: <SelectMode />,
           },
           {
-            path: "/workbook/:id/modify",
-            element: <ModifyWorkBook />,
-          },
-          {
             path: "/workbook/:id/study",
-            element: <WorkBookDetailPage />, // ✅ 새로 추가된 부분
+            element: <WorkBookDetailPage wrong={false} />, // ✅ 새로 추가된 부분
           },
           {
             path: "/workbook/:id/test",
             element: <WordTestPage />,
           },
-          // {
-          //   path: "/wrongworkbooks/:id",
-          //   element: <WorkBookDetailPage />, // ✅ 새로 추가된 부분
-          // },
           {
-            // path: "/wrongworkbooks/:id",
+            path: "/workbook/:id/modify",
+            element: <ModifyWorkBook />,
+          },
+          {
             path: "/workbook/:id/wrong",
             element: <WorkBookDetailPage wrong={true} />, // ✅ 새로 추가된 부분
           },

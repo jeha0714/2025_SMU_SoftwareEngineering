@@ -15,7 +15,7 @@ export const fetchWorkBookMode = async (id: string | undefined) => {
   const res = await vocaServerNeedAuth.get(`/api/workbook/${id}`, {
     headers: { Authorization: `Bearer ${token}` },
   });
-  console.log(res);
+  // console.log(res);
   return res.data;
 };
 
@@ -25,7 +25,7 @@ export const createWorkbook = async (workbookData: {
   category: string;
 }) => {
   const token = sessionStorage.getItem("accessToken");
-  console.log(workbookData);
+  // console.log(workbookData);
   const res = await vocaServerNeedAuth.post(
     "/api/workbook/create-gpt",
     workbookData,

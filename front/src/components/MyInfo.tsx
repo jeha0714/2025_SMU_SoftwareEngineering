@@ -21,7 +21,7 @@ export default function MyInfo() {
         },
       })
       .then((response) => {
-        console.log(response.data.result);
+        // console.log(response.data.result);
         setUserInfo(response.data.result);
       })
       .catch((error) => {
