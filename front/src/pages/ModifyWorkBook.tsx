@@ -171,23 +171,32 @@ const ModifyWorkBook = () => {
 
   const handleAddWord = () => {
     if (!workbook) return;
-     
     const newWord: Word = {
       wordId: null,
       content: "",
       meaning: "",
       partOfSpeech: "noun",
     };
+    setEditingWord(newWord);
+    setShowAddWordModal(true);
+  };
+
+  const handleAddWordSave = () => {
+    if (!workbook) return;
 
     // 로컬 상태에 새 단어 추가
-    const updatedWordList = [...workbook.wordList, newWord];
+    const updatedWordList = [...workbook.wordList, editingWord];
     setWorkbook((prev) =>
       prev ? { ...prev, wordList: updatedWordList } : null
     );
 
-    // 새 단어 편집 모드로 설정
-    setEditingWordIndex(workbook.wordList.length);
-    setEditingWord(newWord);
+    setShowAddWordModal(false);
+    setEditingWord({
+      wordId: null,
+      content: "",
+      meaning: "",
+      partOfSpeech: "noun",
+    });
   };
 
   const handleComplete = async () => {
