@@ -1,10 +1,19 @@
 import { useParams } from "react-router-dom";
 import { Settings } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { fetchWorkBookMode } from "../utils/funcFetch";
 
 const SelectMode = () => {
-  // 예시용 단어장 이름
-  const { id } = useParams();
-  const wordbookName = decodeURIComponent(id || "");
+  const { id } = useParams<{ id: string }>();
+
+  // useQuery로 단어장 정보 패칭
+  const { data, isLoading } = useQuery({
+    queryKey: ["workbook", id],
+    queryFn: () => fetchWorkBookMode(id),
+    enabled: !!id,
+  });
+
+  if (isLoading) return <div>불러오는 중...</div>;
 
   return (
     <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-50 to-purple-50 p-4">
@@ -12,7 +21,7 @@ const SelectMode = () => {
         {/* 단어장 이름 */}
         <div className="text-center mb-8">
           <h2 className="text-2xl sm:text-3xl font-bold text-gray-800">
-            {wordbookName}
+            {data?.title}
           </h2>
         </div>
 

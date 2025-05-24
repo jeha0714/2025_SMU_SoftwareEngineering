@@ -11,6 +11,7 @@ import WelcomePage from "./pages/WelcomePage";
 import SelectMode from "./components/SelectMode";
 import WordTestPage from "./pages/WordTest";
 import WorkBookDetailPage from "./pages/WorkBookDetailPage";
+import CreateWorkBook from "./pages/CreateWorkBook";
 
 const router = createBrowserRouter([
   {
@@ -38,7 +39,11 @@ const router = createBrowserRouter([
             element: <MyPage />,
           },
           {
-            path: "/wordbook/:id",
+            path: "/workbook/create",
+            element: <CreateWorkBook />,
+          },
+          {
+            path: "/workbook/:id",
             element: <SelectMode />,
           },
           {

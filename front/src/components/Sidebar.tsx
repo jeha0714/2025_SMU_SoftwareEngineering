@@ -9,14 +9,15 @@ import {
   BookOpen,
   MoreHorizontal,
   Dot,
+  Plus,
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { fetchWorkBookList } from "../utils/funcFetch";
 
-type WorkBookCategory = "suneung" | "TOEIC" | "TOEFL" | "ETC";
+type WorkBookCategory = "SUNEUNG" | "TOEIC" | "TOEFL" | "ETC";
 
 const categoryNameMap: Record<WorkBookCategory, string> = {
-  suneung: "수능",
+  SUNEUNG: "수능",
   TOEIC: "토익",
   TOEFL: "토플",
   ETC: "기타",
@@ -48,9 +49,13 @@ export default function Sidebar() {
     }));
   };
 
-  const handleItemClick = (item: string) => {
-    setActiveItem(item);
-    navigate(`/wordbook/${encodeURIComponent(item)}`);
+  const handleItemClick = (workbook: WorkBook) => {
+    setActiveItem(workbook.title);
+    navigate(`/workbook/${workbook.id}`);
+  };
+
+  const handleCreateWorkbook = () => {
+    navigate("/workbook/create");
   };
 
   const renderIcon = (name: string) => {
@@ -82,17 +87,17 @@ export default function Sidebar() {
   // 모든 카테고리를 항상 메뉴에 표시
   const allCategories = Object.values(categoryNameMap);
 
-  // 동적으로 menuItems 생성
+  // menuItems를 WorkBook 객체 배열로 변경
   const menuItems = allCategories.map((category) => ({
     name: category,
-    submenu: groupedWorkbooks[category]?.map((wb) => wb.title) || [],
+    submenu: groupedWorkbooks[category] || [],
   }));
 
   if (loading) return <div className="p-4 text-gray-600">불러오는 중...</div>;
 
   return (
-    <aside className="w-full h-full bg-white shadow-lg  overflow-y-auto border border-gray-200">
-      <div className="py-2">
+    <aside className="w-full h-full bg-white shadow-lg overflow-y-auto border border-gray-200 flex flex-col">
+      <div className="py-2 flex-1">
         {menuItems.map((item) => (
           <div key={item.name} className="mb-2">
             <button
@@ -115,23 +120,23 @@ export default function Sidebar() {
               <div className="flex flex-col bg-gray-50">
                 {item.submenu.map((subItem) => (
                   <button
-                    key={subItem}
+                    key={subItem.id}
                     onClick={() => handleItemClick(subItem)}
                     className={`w-full flex items-center px-6 py-3 hover:bg-gray-100 transition-colors text-left ${
-                      activeItem === subItem
+                      activeItem === subItem.title
                         ? "text-indigo-600 bg-indigo-50 font-medium"
                         : "text-gray-600"
                     }`}
                   >
                     <div className="flex items-center gap-2">
                       <span className="inline-flex w-4 h-4 items-center justify-center flex-shrink-0">
-                        {activeItem === subItem ? (
+                        {activeItem === subItem.title ? (
                           <ChevronRight size={16} className="text-indigo-600" />
                         ) : (
                           <Dot className="text-gray-600" />
                         )}
                       </span>
-                      <span>{subItem}</span>
+                      <span>{subItem.title}</span>
                     </div>
                   </button>
                 ))}
@@ -139,6 +144,17 @@ export default function Sidebar() {
             )}
           </div>
         ))}
+      </div>
+
+      {/* 단어장 생성 버튼 */}
+      <div className="border-t border-gray-200 p-4">
+        <button
+          onClick={handleCreateWorkbook}
+          className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-medium transition-colors"
+        >
+          <Plus size={18} />
+          <span>단어장 생성</span>
+        </button>
       </div>
     </aside>
   );
