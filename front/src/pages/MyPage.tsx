@@ -3,7 +3,7 @@ import CalendarPage from "../components/Calendar";
 import MyInfo from "../components/MyInfo";
 
 export default function MyPage() {
-  const [activeTab, setActiveTab] = useState("calendar"); // "calendar" 또는 "info"
+  const [activeTab, setActiveTab] = useState("info"); // "calendar" 또는 "info"
 
   return (
     <article className="w-full h-[90vh] flex flex-col bg-gray-100 p-6">
