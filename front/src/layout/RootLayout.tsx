@@ -13,20 +13,32 @@ export default function RootLayout() {
   const publicPaths = ["/welcome", "/signin", "/signup"];
   const isPublicPath = publicPaths.includes(currentPath);
 
+  if (!isLogin && !isPublicPath) {
+    // 로그인되지 않고 public 경로가 아닌 경우만 리다이렉트
+    return <Navigate to="/welcome" replace />;
+  }
+
   return (
     <>
       <Navbar />
       <main className="w-full h-[90vh] flex flex-row">
-        {!isLogin && !isPublicPath ? (
-          // 로그인되지 않고 public 경로가 아닌 경우만 리다이렉트
-          <Navigate to="/welcome" replace />
-        ) : (
-          <>
-            {/* Side 컴포넌트는 로그인된 경우에만 표시 */}
-            {isLogin && <Sidebar />}
-            <Outlet />
-          </>
-        )}
+        <>
+          {/* Side 컴포넌트는 로그인된 경우에만 표시 */}
+          {isLogin ? (
+            <>
+              <div className="w-[20vw] h-full flex flex-row">
+                <Sidebar />
+              </div>
+              <div className="w-[80vw] h-full">
+                <Outlet />
+              </div>
+            </>
+          ) : (
+            <div className="w-full h-full">
+              <Outlet />
+            </div>
+          )}
+        </>
       </main>
     </>
   );

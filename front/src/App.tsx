@@ -8,6 +8,7 @@ import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import WelcomePage from "./pages/WelcomePage";
+import SelectMode from "./components/SelectMode";
 import WordTestPage from "./pages/WordTest";
 import WorkbookList from "./pages/WorkBookListPage";
 import WorkBookDetailPage from './pages/WorkBookDetailPage';
@@ -38,10 +39,10 @@ const router = createBrowserRouter([
             path: "/mypage",
             element: <MyPage />,
           },
-          // {
-          //   path: "/homepage",
-          //   element: <HomePage />,
-          // },
+          {
+            path: "/wordbook/:id",
+            element: <SelectMode />,
+          },
         ],
       },
       // {
