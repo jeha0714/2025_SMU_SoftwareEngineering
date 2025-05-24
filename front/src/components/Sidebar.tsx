@@ -10,12 +10,36 @@ import {
   MoreHorizontal,
   Dot,
 } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { fetchWorkBookList } from "../utils/funcFetch";
+
+type WorkBookCategory = "suneung" | "TOEIC" | "TOEFL" | "ETC";
+
+const categoryNameMap: Record<WorkBookCategory, string> = {
+  suneung: "수능",
+  TOEIC: "토익",
+  TOEFL: "토플",
+  ETC: "기타",
+};
+
+type WorkBook = {
+  id: number;
+  title: string;
+  description: string;
+  category: WorkBookCategory;
+  creatorName: string;
+};
 
 export default function Sidebar() {
   const [openMenus, setOpenMenus] = useState<Record<string, boolean>>({});
-
   const [activeItem, setActiveItem] = useState<string>("");
   const navigate = useNavigate();
+
+  // useQuery로 데이터 패칭
+  const { data: workbooks = [], isLoading: loading } = useQuery<WorkBook[]>({
+    queryKey: ["workbooks"],
+    queryFn: fetchWorkBookList,
+  });
 
   const toggleMenu = (menu: string) => {
     setOpenMenus((prev) => ({
@@ -44,37 +68,27 @@ export default function Sidebar() {
     }
   };
 
-  const menuItems = [
-    {
-      name: "수능",
-      submenu: [
-        "토익 기본",
-        "토익 심화",
-        "토익 심화",
-        "토익 심화",
-        "토익 심화",
-        "토익 심화",
-        "토익 심화",
-        "토익 심화",
-        "토익 심화",
-        "토익 심화",
-        "토익 심화",
-        "토익 심화",
-      ],
+  // workbooks를 카테고리별로 그룹화
+  const groupedWorkbooks = workbooks.reduce<Record<string, WorkBook[]>>(
+    (acc, wb) => {
+      const category = categoryNameMap[wb.category];
+      if (!acc[category]) acc[category] = [];
+      acc[category].push(wb);
+      return acc;
     },
-    {
-      name: "토플",
-      submenu: ["토익 기본", "토익 심화"],
-    },
-    {
-      name: "토익",
-      submenu: ["토익 기본", "토익 심화"],
-    },
-    {
-      name: "기타",
-      submenu: ["비지니스 기본 이래용 과연 그럴까요? 후후하하하", "일상 영어"],
-    },
-  ];
+    {}
+  );
+
+  // 모든 카테고리를 항상 메뉴에 표시
+  const allCategories = Object.values(categoryNameMap);
+
+  // 동적으로 menuItems 생성
+  const menuItems = allCategories.map((category) => ({
+    name: category,
+    submenu: groupedWorkbooks[category]?.map((wb) => wb.title) || [],
+  }));
+
+  if (loading) return <div className="p-4 text-gray-600">불러오는 중...</div>;
 
   return (
     <aside className="w-full h-full bg-white shadow-lg  overflow-y-auto border border-gray-200">

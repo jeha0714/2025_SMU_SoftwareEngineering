@@ -10,9 +10,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import WelcomePage from "./pages/WelcomePage";
 import SelectMode from "./components/SelectMode";
 import WordTestPage from "./pages/WordTest";
-import WorkbookList from "./pages/WorkBookListPage";
-import WorkBookDetailPage from './pages/WorkBookDetailPage';
-
+import WorkBookDetailPage from "./pages/WorkBookDetailPage";
 
 const router = createBrowserRouter([
   {
@@ -43,37 +41,29 @@ const router = createBrowserRouter([
             path: "/wordbook/:id",
             element: <SelectMode />,
           },
+          {
+            path: "/workbooks/:id",
+            element: <WorkBookDetailPage />, // ✅ 새로 추가된 부분
+          },
+          {
+            path: "/wrongworkbooks/:id",
+            element: <WorkBookDetailPage wrong={true} />, // ✅ 새로 추가된 부분
+          },
+
+          {
+            path: "/workbooks/:id/test",
+            element: <WordTestPage />,
+          },
+          {
+            path: "/wrongworkbooks/:id",
+            element: <WorkBookDetailPage />, // ✅ 새로 추가된 부분
+          },
         ],
       },
       // {
       //   path: "/test",
       //   element: <WordTestPage />,
       // },
-      {
-        path: "/workbooks/:id",
-        element: <WorkBookDetailPage/>, // ✅ 새로 추가된 부분
-      },
-      {
-        path: "/wrongworkbooks/:id",
-        element: <WorkBookDetailPage wrong={true}/>, // ✅ 새로 추가된 부분
-      },
-      
-      {
-        path: "/workbooks/:id/test",
-        element: <WordTestPage />,
-      },
-      {
-        path: "/wrongworkbooks",
-        element: <WorkbookList wrong={true} />,
-      },
-      {
-        path: "/workbooks",
-        element: <WorkbookList />,
-      },
-      {
-        path: "/wrongworkbooks/:id",
-        element: <WorkBookDetailPage/>, // ✅ 새로 추가된 부분
-      }
     ],
   },
 ]);

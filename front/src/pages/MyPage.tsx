@@ -6,7 +6,7 @@ export default function MyPage() {
   const [activeTab, setActiveTab] = useState("info"); // "calendar" 또는 "info"
 
   return (
-    <article className="w-full h-[90vh] flex flex-col bg-gray-100 p-6">
+    <article className="w-full h-[90vh] flex flex-col justify-center items-center bg-gray-100 p-6">
       {/* 버튼 섹션 */}
       <div className="w-full flex justify-center mb-6">
         <div className="inline-flex rounded-lg shadow-sm bg-white p-1">
@@ -34,7 +34,7 @@ export default function MyPage() {
       </div>
 
       {/* 콘텐츠 섹션 */}
-      <section className="w-full flex-1 bg-white rounded-xl shadow-lg overflow-hidden">
+      <section className="w-full max-w-[750px] flex-1 bg-white rounded-xl shadow-lg overflow-hidden">
         {activeTab !== "calendar" ? (
           <div className="h-full">
             <MyInfo />
