@@ -22,64 +22,49 @@ export default function CreateWorkBook() {
   const queryClient = useQueryClient();
 
   const validateWorkbookName = (name: string) => {
-    // 공백과 언더스코어(_) 이외의 특수문자 검사
-    const specialCharRegex = /[^\w\s가-힣]/;
+    // 한글, 영어 대소문자, 숫자, 공백, 언더스코어(_)만 허용
+    const specialCharRegex = /[^\w\s가-힣a-zA-Z0-9]/;
     return !specialCharRegex.test(name);
   };
 
   const validateWorkbookDescription = (desc: string) => {
-    // 특수문자 검사
-    const specialCharRegex = /[^\w\s가-힣.!_]/;
+    // 한글, 영어 대소문자, 숫자, 공백, 언더스코어(_), 마침표, 느낌표만 허용
+    const specialCharRegex = /[^\w\s가-힣a-zA-Z0-9.!_]/;
     return !specialCharRegex.test(desc);
   };
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setWorkbookName(value);
-
-    if (value && !validateWorkbookName(value)) {
-      setError(
-        "단어장 이름에는 공백과 언더스코어(_) 이외의 특수문자를 사용할 수 없습니다."
-      );
-    } else {
-      setError("");
-    }
+    setWorkbookName(e.target.value);
   };
 
   const handleDescriptionChange = (
     e: React.ChangeEvent<HTMLTextAreaElement>
   ) => {
-    const value = e.target.value;
-    setWorkbookDescription(value);
-
-    if (value && !validateWorkbookDescription(value)) {
-      setError(
-        "단어장 설명에는 !_와 공백 이외의 특수문자를 사용할 수 없습니다."
-      );
-    } else {
-      setError("");
-    }
+    setWorkbookDescription(e.target.value);
   };
 
   const handleCreateWorkbook = async () => {
+    // 입력값 검증
     if (!workbookName.trim()) {
       setError("단어장 이름을 입력해주세요.");
       return;
-    } else if (!workbookDescription.trim()) {
+    }
+
+    if (!workbookDescription.trim()) {
       setError("단어장 설명을 작성해주세요.");
       return;
     }
 
     if (!validateWorkbookName(workbookName)) {
       setError(
-        "단어장 이름에는 공백과 언더스코어(_) 이외의 특수문자를 사용할 수 없습니다."
+        "단어장 이름에는 완성된 한글, 언더스코어(_)와 공백 이외의 문자를 사용할 수 없습니다."
       );
       return;
     }
 
-    if (!validateWorkbookName(workbookName)) {
+    if (!validateWorkbookDescription(workbookDescription)) {
       setError(
-        "단어장 이름에는 공백과 언더스코어(_) 이외의 특수문자를 사용할 수 없습니다."
+        "단어장 설명에는 완성된 한글, !_와 공백 이외의 문자를 사용할 수 없습니다."
       );
       return;
     }

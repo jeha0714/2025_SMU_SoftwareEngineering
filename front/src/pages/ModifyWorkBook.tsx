@@ -42,6 +42,7 @@ const ModifyWorkBook = () => {
   const [showDeleteWorkbookModal, setShowDeleteWorkbookModal] = useState(false);
   const [showAddWordModal, setShowAddWordModal] = useState(false);
   const [deleteWordIndex, setDeleteWordIndex] = useState<number | null>(null);
+  const [addWordError, setAddWordError] = useState<string>("");
 
   const [editTitle, setEditTitle] = useState("");
   const [editDescription, setEditDescription] = useState("");
@@ -179,10 +180,38 @@ const ModifyWorkBook = () => {
     };
     setEditingWord(newWord);
     setShowAddWordModal(true);
+    setAddWordError("");
   };
 
   const handleAddWordSave = () => {
     if (!workbook) return;
+
+    // 입력값 검증
+    const wordContent = editingWord.content.trim();
+    const wordMeaning = editingWord.meaning.trim();
+
+    // 영어 소문자와 공백만 허용하는 정규식
+    const englishAndSpaceRegex = /^[a-z\s]*$/;
+
+    if (!wordContent || !wordMeaning) {
+      setAddWordError("단어와 의미를 모두 입력해주세요.");
+      return;
+    }
+
+    if (!englishAndSpaceRegex.test(wordContent)) {
+      setAddWordError("단어는 영어 소문자와 공백만 입력 가능합니다.");
+      return;
+    }
+
+    if (!englishAndSpaceRegex.test(wordMeaning)) {
+      setAddWordError("의미는 영어 소문자와 공백만 입력 가능합니다.");
+      return;
+    }
+
+    if (wordContent === "" || wordMeaning === "") {
+      setAddWordError("단어와 의미는 공백만으로 이루어질 수 없습니다.");
+      return;
+    }
 
     // 로컬 상태에 새 단어 추가
     const updatedWordList = [...workbook.wordList, editingWord];
@@ -197,6 +226,7 @@ const ModifyWorkBook = () => {
       meaning: "",
       partOfSpeech: "noun",
     });
+    setAddWordError("");
   };
 
   const handleComplete = async () => {
@@ -672,10 +702,10 @@ const ModifyWorkBook = () => {
                     onChange={(e) =>
                       setEditingWord((prev) => ({
                         ...prev,
-                        content: e.target.value,
+                        content: e.target.value.toLowerCase(),
                       }))
                     }
-                    placeholder="단어를 입력하세요"
+                    placeholder="영어 소문자로 입력하세요"
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                   />
                 </div>
@@ -689,10 +719,10 @@ const ModifyWorkBook = () => {
                     onChange={(e) =>
                       setEditingWord((prev) => ({
                         ...prev,
-                        meaning: e.target.value,
+                        meaning: e.target.value.toLowerCase(),
                       }))
                     }
-                    placeholder="의미를 입력하세요"
+                    placeholder="영어 소문자로 입력하세요"
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                   />
                 </div>
@@ -716,11 +746,19 @@ const ModifyWorkBook = () => {
                     <option value="adverb">부사</option>
                   </select>
                 </div>
+                {addWordError && (
+                  <div className="text-red-500 text-sm mt-2">
+                    {addWordError}
+                  </div>
+                )}
               </div>
               <div className="flex gap-3 justify-end mt-6">
                 <button
                   type="button"
-                  onClick={() => setShowAddWordModal(false)}
+                  onClick={() => {
+                    setShowAddWordModal(false);
+                    setAddWordError("");
+                  }}
                   className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
                 >
                   취소
