@@ -9,7 +9,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import WelcomePage from "./pages/WelcomePage";
 import SelectMode from "./components/SelectMode";
-import WordTestPage from "./pages/WordTest";
+import WordTestPage from "./pages/WordTestPage";
 import WorkBookDetailPage from "./pages/WorkBookDetailPage";
 import CreateWorkBook from "./pages/CreateWorkBook";
 import ModifyWorkBook from "./pages/ModifyWorkBook";
@@ -65,10 +65,6 @@ const router = createBrowserRouter([
           },
         ],
       },
-      // {
-      //   path: "/test",
-      //   element: <WordTestPage />,
-      // },
     ],
   },
 ]);
