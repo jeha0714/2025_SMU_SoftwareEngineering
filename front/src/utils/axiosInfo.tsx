@@ -2,7 +2,7 @@ import axios from "axios";
 
 export const vocaServerNoAuth = axios.create({
   baseURL: "http://localhost:8080", // 테스트용 백엔드 URL
-  timeout: 1000,
+  timeout: 10000,
   headers: {
     "Content-Type": "application/json",
   },
