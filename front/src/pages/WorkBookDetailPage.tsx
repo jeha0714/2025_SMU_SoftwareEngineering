@@ -66,7 +66,9 @@ const WorkbookDetail: React.FC<WorkbookListDetailProps> = ({ wrong }) => {
           <h2 className="text-2xl font-bold text-gray-800 mb-2">
             {workbookName || "단어장"}
           </h2>
-          <p className="text-purple-600 font-medium">학습 모드</p>
+          <p className="text-purple-600 font-medium">
+            {!wrong ? "학습 모드" : "오답 모드"}
+          </p>
         </div>
 
         {/* 진행도 */}
