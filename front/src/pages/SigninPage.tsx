@@ -91,8 +91,10 @@ export default function SigninPage() {
 
     onSuccess: (response) => {
       const accessToken = response.data.result.jwtToken; // jwtToken은 문자열임
-      // console.log(response);
+      const role = response.data.result.roleType; // role은 admin or general-user
+      console.log(response);
       sessionStorage.setItem("accessToken", accessToken);
+      sessionStorage.setItem("roleType", role);
       login();
       navigate("/");
     },
