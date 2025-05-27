@@ -125,10 +125,21 @@ const WordTestPage = () => {
   const submitResults = async () => {
     try {
       const token = sessionStorage.getItem("accessToken");
-      const wrongAnswers = answers.filter((item) => !item.answer);
+      const wrongCount = answers.filter((item) => !item.answer).length;
+      const wrongWords = answers.filter((item) => !item.answer);
+
+      const correctCount = answers.length - wrongCount;
+
+      // console.log(correctCount);
+      // console.log(wrongCount);
+      const requestBody = {
+        correctCount: correctCount,
+        wordList: wrongWords,
+      };
+
       await vocaServerNeedAuth.post(
         `/api/workbook/submit?workBookId=${id}`, // workBookId를 쿼리 파라미터로 전달
-        wrongAnswers,
+        requestBody,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -136,9 +147,8 @@ const WordTestPage = () => {
           },
         }
       );
-      // console.log(wrongAnswers);
-      // 테스트 완료 로직
-      alert("테스트가 완료되었습니다!");
+      console.log(wrongWords);
+      alert("제출이 완료되었습니다!");
       navigate(`/workbook/${id}`);
     } catch (err) {
       console.error("제출 실패", err);

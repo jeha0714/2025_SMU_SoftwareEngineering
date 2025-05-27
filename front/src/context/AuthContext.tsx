@@ -1,6 +1,7 @@
 import { createContext, ReactNode, useContext, useState } from "react";
 
 interface IAuthContext {
+  isAdmin: boolean;
   isLogin: boolean;
   login: () => void;
   logout: () => void;
@@ -11,6 +12,12 @@ interface IAuthContext {
 const AuthContext = createContext<IAuthContext | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
+  const [isAdmin, setIsAdmin] = useState<boolean>(() => {
+    const roleType = sessionStorage.getItem("roleType");
+    if (roleType != "USER") return true;
+    return false;
+  });
+
   const [isLogin, setIsLogin] = useState<boolean>(() => {
     const accessTokenData = sessionStorage.getItem("accessToken");
     if (accessTokenData) return true;
@@ -18,6 +25,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   });
 
   const login = (): void => {
+    setIsAdmin(() => {
+      const roleType = sessionStorage.getItem("roleType");
+      if (roleType != "USER") return true;
+      return false;
+    });
     setIsLogin(true);
   };
 
@@ -27,7 +39,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ isLogin, login, logout }}>
+    <AuthContext.Provider value={{ isAdmin, isLogin, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
