@@ -3,6 +3,7 @@ import { Edit3, Trash2, Plus, X, Save, AlertTriangle } from "lucide-react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { fetchWorkBookMode } from "../utils/funcFetch";
+import { vocaServerNeedAuth } from "../utils/axiosInfo";
 
 type Word = {
   wordId: number | null;
@@ -234,13 +235,9 @@ const ModifyWorkBook = () => {
 
     try {
       const token = sessionStorage.getItem("accessToken");
-      const response = await fetch(`http://localhost:8080/api/workbook/${id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
+      const response = await vocaServerNeedAuth.put(
+        `/api/workbook/${id}`,
+        {
           id: workbook.id,
           title: workbook.title,
           description: workbook.description,
@@ -251,10 +248,15 @@ const ModifyWorkBook = () => {
             meaning: word.meaning,
             partOfSpeech: word.partOfSpeech,
           })),
-        }),
-      });
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
-      if (response.ok) {
+      if (response.status === 200) {
         // Invalidate and refetch the workbook data
         await queryClient.invalidateQueries({ queryKey: ["workbook", id] });
         await queryClient.invalidateQueries({ queryKey: ["workbooks"] });
@@ -264,6 +266,7 @@ const ModifyWorkBook = () => {
         alert("수정에 실패했습니다.");
       }
     } catch (error) {
+      console.error(error);
       alert("오류가 발생했습니다.");
     }
   };
@@ -272,15 +275,13 @@ const ModifyWorkBook = () => {
     if (!id) return;
     try {
       const token = sessionStorage.getItem("accessToken");
-      const response = await fetch(`http://localhost:8080/api/workbook/${id}`, {
-        method: "DELETE",
+      const response = await vocaServerNeedAuth.delete(`/api/workbook/${id}`, {
         headers: {
-          "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
       });
 
-      if (response.ok) {
+      if (response.status === 200) {
         alert("단어장이 삭제되었습니다.");
         await queryClient.invalidateQueries({ queryKey: ["workbooks"] });
         navigate("/");
@@ -288,6 +289,7 @@ const ModifyWorkBook = () => {
         alert("삭제에 실패했습니다.");
       }
     } catch (error) {
+      console.error(error);
       alert("오류가 발생했습니다.");
     }
     setShowDeleteWorkbookModal(false);
