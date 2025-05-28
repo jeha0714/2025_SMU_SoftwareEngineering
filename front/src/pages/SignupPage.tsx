@@ -111,7 +111,11 @@ export default function SignupPage() {
     },
     onError: (error: AxiosError<{ message: string }>) => {
       console.error("Register failed:", error);
-      setStatusError(error.message);
+      if (error.response?.data?.message) {
+        setStatusError(error.response.data.message);
+      } else {
+        setStatusError("회원가입 중 오류가 발생했습니다.");
+      }
     },
   });
   // Form submission handler
@@ -192,7 +196,7 @@ export default function SignupPage() {
           >
             {isPending ? "가입 중..." : "회원가입"}
           </button>
-          {!isFormValid && isSubmitted ? (
+          {isSubmitted ? (
             <div className="text-red-500 text-sm mt-1 text-center">
               {statusError}
             </div>

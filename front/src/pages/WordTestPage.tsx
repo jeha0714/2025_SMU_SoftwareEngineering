@@ -52,7 +52,6 @@ const WordTestPage = () => {
   useEffect(() => {
     if (answers.length === words.length && words.length > 0) {
       submitResults();
-      checkInAttendance();
     }
   }, [answers]);
 
@@ -150,41 +149,6 @@ const WordTestPage = () => {
     }
   };
 
-  const checkInAttendance = async () => {
-    const token = sessionStorage.getItem("accessToken");
-    if (!token) {
-      console.warn("토큰 없음: 출석 요청 생략");
-      return;
-    }
-    try {
-      const response = await vocaServerNeedAuth.post(
-        "/api/attendance/check-in",
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      const data = response.data;
-      if (data.isSuccess) {
-        console.log("출석 체크 성공:", data.message);
-      } else {
-        console.warn("출석 체크 실패:", data.message);
-      }
-    } catch (error: any) {
-      if (error.response) {
-        console.error(
-          "출석 요청 오류:",
-          error.response.status,
-          error.response.data.message
-        );
-      } else {
-        console.error("출석 요청 실패:", error.message);
-      }
-    }
-  };
-
   const submitResults = async () => {
     try {
       const token = sessionStorage.getItem("accessToken");
@@ -221,7 +185,6 @@ const WordTestPage = () => {
 
   const handleComplete = async () => {
     await submitResults();
-    await checkInAttendance();
     if (testResults && testResults.wrongWords.length > 0) {
       alert("오답 단어장이 생성되었습니다!");
     } else {

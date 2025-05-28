@@ -44,7 +44,65 @@ const WorkbookDetail: React.FC<WorkbookListDetailProps> = ({ wrong }) => {
       });
   }, [id]);
 
-  const nextWord = () => {
+  const checkInAttendance = async () => {
+    const token = sessionStorage.getItem("accessToken");
+    if (!token) {
+      console.warn("토큰 없음: 출석 요청 생략");
+      return;
+    }
+    try {
+      const response = await vocaServerNeedAuth.post(
+        "/api/attendance/check-in",
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      const data = response.data;
+      if (data.isSuccess) {
+        console.log("출석 체크 성공:", data.message);
+      } else {
+        console.warn("출석 체크 실패:", data.message);
+      }
+    } catch (error: any) {
+      if (error.response) {
+        console.error(
+          "출석 요청 오류:",
+          error.response.status,
+          error.response.data.message
+        );
+      } else {
+        console.error("출석 요청 실패:", error.message);
+      }
+    }
+  };
+
+  const addStudyWordNum = async () => {
+    const token = sessionStorage.getItem("accessToken");
+    if (!token) {
+      console.warn("토큰 없음: 출석 요청 생략");
+      return;
+    }
+    try {
+      await vocaServerNeedAuth.post(
+        "/api/workbook/study",
+        { correctCount: 1 },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+    } catch (error: any) {
+      console.error(error.message);
+    }
+  };
+
+  const nextWord = async () => {
+    await addStudyWordNum();
+    await checkInAttendance();
     if (index === words.length - 1) {
       alert("학습이 종료되었습니다");
       navigate(`/workbook/${id}`);
