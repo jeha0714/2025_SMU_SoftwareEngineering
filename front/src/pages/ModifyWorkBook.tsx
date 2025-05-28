@@ -142,6 +142,7 @@ const ModifyWorkBook = () => {
     setWorkbook((prev) =>
       prev ? { ...prev, wordList: updatedWordList } : null
     );
+    alert("단어 수정에 성공하셨습니다!");
     setEditingWordIndex(null);
 
     // TODO: API 호출 구현
@@ -166,6 +167,7 @@ const ModifyWorkBook = () => {
 
     setShowDeleteModal(false);
     setDeleteWordIndex(null);
+    alert("단어가 삭제되었습니다.");
 
     // TODO: API 호출 구현
     // 실제 API 호출 시에는 여기서 서버에 삭제 요청
@@ -193,6 +195,8 @@ const ModifyWorkBook = () => {
 
     // 영어 소문자와 공백만 허용하는 정규식
     const englishAndSpaceRegex = /^[a-z\s]*$/;
+    // 한글과 공백만 허용하는 정규식
+    const koreanAndSpaceRegex = /^[가-힣\s]*$/;
 
     if (!wordContent || !wordMeaning) {
       setAddWordError("단어와 의미를 모두 입력해주세요.");
@@ -204,8 +208,8 @@ const ModifyWorkBook = () => {
       return;
     }
 
-    if (!englishAndSpaceRegex.test(wordMeaning)) {
-      setAddWordError("의미는 영어 소문자와 공백만 입력 가능합니다.");
+    if (!koreanAndSpaceRegex.test(wordMeaning)) {
+      setAddWordError("의미는 한글과 공백만 입력 가능합니다.");
       return;
     }
 
@@ -228,6 +232,7 @@ const ModifyWorkBook = () => {
       partOfSpeech: "noun",
     });
     setAddWordError("");
+    alert("단어 추가에 성공했습니다.");
   };
 
   const handleComplete = async () => {
@@ -260,14 +265,14 @@ const ModifyWorkBook = () => {
         // Invalidate and refetch the workbook data
         await queryClient.invalidateQueries({ queryKey: ["workbook", id] });
         await queryClient.invalidateQueries({ queryKey: ["workbooks"] });
-        alert("단어장이 성공적으로 수정되었습니다.");
-        navigate(`/workbook/${id}`);
+        alert("수정이 완료되었습니다.");
+        navigate(`/`);
       } else {
-        alert("수정에 실패했습니다.");
+        alert("본인이 만든 단어장만 수정 및 삭제할 수 있습니다.");
       }
     } catch (error) {
       console.error(error);
-      alert("오류가 발생했습니다.");
+      alert("본인이 만든 단어장만 수정 및 삭제할 수 있습니다.");
     }
   };
 
@@ -282,15 +287,15 @@ const ModifyWorkBook = () => {
       });
 
       if (response.status === 200) {
-        alert("단어장이 삭제되었습니다.");
+        alert("단어장 삭제가 완료되었습니다.");
         await queryClient.invalidateQueries({ queryKey: ["workbooks"] });
         navigate("/");
       } else {
-        alert("삭제에 실패했습니다.");
+        alert("본인이 만든 단어장만 수정 및 삭제할 수 있습니다.");
       }
     } catch (error) {
       console.error(error);
-      alert("오류가 발생했습니다.");
+      alert("본인이 만든 단어장만 수정 및 삭제할 수 있습니다.");
     }
     setShowDeleteWorkbookModal(false);
   };
@@ -721,10 +726,10 @@ const ModifyWorkBook = () => {
                     onChange={(e) =>
                       setEditingWord((prev) => ({
                         ...prev,
-                        meaning: e.target.value.toLowerCase(),
+                        meaning: e.target.value,
                       }))
                     }
-                    placeholder="영어 소문자로 입력하세요"
+                    placeholder="한글로 입력하세요"
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                   />
                 </div>

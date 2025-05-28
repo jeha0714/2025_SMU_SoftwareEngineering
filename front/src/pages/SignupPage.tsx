@@ -106,6 +106,7 @@ export default function SignupPage() {
     onSuccess: (response) => {
       // 성공적인 가입 후 처리
       console.log("가입 성공", response.data);
+      alert("회원가입 성공!");
       navigate("/signin"); // 로그인 페이지로 리디렉션
     },
     onError: (error: AxiosError<{ message: string }>) => {

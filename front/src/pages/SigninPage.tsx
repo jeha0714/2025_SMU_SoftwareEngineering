@@ -95,7 +95,9 @@ export default function SigninPage() {
       console.log(response);
       sessionStorage.setItem("accessToken", accessToken);
       sessionStorage.setItem("roleType", role);
+      setIsSubmitted(false);
       login();
+      alert("로그인에 성공했습니다.");
       navigate("/");
     },
     onError: (error: AxiosError<{ status: number }>) => {
@@ -119,6 +121,7 @@ export default function SigninPage() {
     // 에러가 있으면 API 호출하지 않고 리턴
     if (!isFormValid) {
       setStatusError("모든 입력값을 올바르게 입력해주세요.");
+      setIsSubmitted(false);
       return;
     }
 
@@ -166,7 +169,7 @@ export default function SigninPage() {
           >
             {isPending ? "로그인 중..." : "로그인"}
           </button>
-          {!isFormValid && isSubmitted ? (
+          {isSubmitted ? (
             <div className="text-red-500 text-sm mt-1 text-center">
               {statusError}
             </div>
