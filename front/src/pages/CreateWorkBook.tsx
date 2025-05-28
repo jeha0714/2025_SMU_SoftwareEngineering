@@ -86,6 +86,9 @@ export default function CreateWorkBook() {
       // Sidebar의 workbook 목록을 새로고침
       await queryClient.invalidateQueries({ queryKey: ["workbooks"] });
 
+      // 단어장 생성 완료 메시지
+      alert("단어장 생성이 완료되었습니다.");
+
       // 생성된 단어장 목록으로 이동
       navigate("/");
     } catch (err) {

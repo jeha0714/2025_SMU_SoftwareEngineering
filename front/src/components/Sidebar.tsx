@@ -10,6 +10,7 @@ import {
   MoreHorizontal,
   Dot,
   Plus,
+  Library,
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { fetchWorkBookList } from "../utils/funcFetch";
@@ -66,11 +67,11 @@ export default function Sidebar() {
       acc[category].push(wb);
       return acc;
     },
-    {}
+    { 전체: workbooks } // 전체 카테고리 추가
   );
 
   // 모든 카테고리를 항상 메뉴에 표시
-  const allCategories = Object.values(categoryNameMap);
+  const allCategories = ["전체", ...Object.values(categoryNameMap)];
 
   // menuItems를 WorkBook 객체 배열로 변경
   const menuItems = allCategories.map((category) => ({
@@ -80,6 +81,8 @@ export default function Sidebar() {
 
   const renderIcon = (name: string) => {
     switch (name) {
+      case "전체":
+        return <Library size={18} />;
       case "수능":
         return <GraduationCap size={18} />;
       case "토플":

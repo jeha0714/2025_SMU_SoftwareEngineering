@@ -106,11 +106,16 @@ export default function SignupPage() {
     onSuccess: (response) => {
       // 성공적인 가입 후 처리
       console.log("가입 성공", response.data);
+      alert("회원가입 성공!");
       navigate("/signin"); // 로그인 페이지로 리디렉션
     },
     onError: (error: AxiosError<{ message: string }>) => {
       console.error("Register failed:", error);
-      setStatusError(error.message);
+      if (error.response?.data?.message) {
+        setStatusError(error.response.data.message);
+      } else {
+        setStatusError("회원가입 중 오류가 발생했습니다.");
+      }
     },
   });
   // Form submission handler
@@ -191,7 +196,7 @@ export default function SignupPage() {
           >
             {isPending ? "가입 중..." : "회원가입"}
           </button>
-          {!isFormValid && isSubmitted ? (
+          {isSubmitted ? (
             <div className="text-red-500 text-sm mt-1 text-center">
               {statusError}
             </div>

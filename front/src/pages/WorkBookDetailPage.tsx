@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { vocaServerNeedAuth } from "../utils/axiosInfo";
 import { Medal } from "lucide-react";
 
@@ -19,6 +19,7 @@ const WorkbookDetail: React.FC<WorkbookListDetailProps> = ({ wrong }) => {
   const [words, setWords] = useState<Word[]>([]);
   const [workbookName, setWorkbookName] = useState<string>(""); // 단어장 이름 상태 추가
   const [index, setIndex] = useState(0);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const url = wrong
@@ -36,14 +37,82 @@ const WorkbookDetail: React.FC<WorkbookListDetailProps> = ({ wrong }) => {
         setWorkbookName(res.data.title);
         setWords(res.data.wordList);
       })
-      .catch((err) => console.error("단어장 로딩 실패:", err));
+      .catch((err) => {
+        alert("네트워크 연결을 확인해주세요.");
+        console.error("단어장 로딩 실패:", err);
+        navigate("/");
+      });
   }, [id]);
 
-  const nextWord = () => {
-    setIndex((prev) => (prev + 1) % words.length);
+  const checkInAttendance = async () => {
+    const token = sessionStorage.getItem("accessToken");
+    if (!token) {
+      console.warn("토큰 없음: 출석 요청 생략");
+      return;
+    }
+    try {
+      const response = await vocaServerNeedAuth.post(
+        "/api/attendance/check-in",
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      const data = response.data;
+      if (data.isSuccess) {
+        console.log("출석 체크 성공:", data.message);
+      } else {
+        console.warn("출석 체크 실패:", data.message);
+      }
+    } catch (error: any) {
+      if (error.response) {
+        console.error(
+          "출석 요청 오류:",
+          error.response.status,
+          error.response.data.message
+        );
+      } else {
+        console.error("출석 요청 실패:", error.message);
+      }
+    }
+  };
+
+  const addStudyWordNum = async () => {
+    const token = sessionStorage.getItem("accessToken");
+    if (!token) {
+      console.warn("토큰 없음: 출석 요청 생략");
+      return;
+    }
+    try {
+      await vocaServerNeedAuth.post(
+        "/api/workbook/study",
+        { correctCount: 1 },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+    } catch (error: any) {
+      console.error(error.message);
+    }
+  };
+
+  const nextWord = async () => {
+    await addStudyWordNum();
+    await checkInAttendance();
+    if (index === words.length - 1) {
+      alert("학습이 종료되었습니다");
+      navigate(`/workbook/${id}`);
+      return;
+    }
+    setIndex((prev) => prev + 1);
   };
 
   const prevWord = () => {
+    if (index === 0) return;
     setIndex((prev) => (prev - 1 + words.length) % words.length);
   };
 
