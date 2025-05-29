@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { createWorkbook } from "../utils/funcFetch";
 import { useQueryClient } from "@tanstack/react-query";
+import { useToast } from "../context/ToastContext";
 
 type WorkBookCategory = "SUNEUNG" | "TOEIC" | "TOEFL" | "ETC";
 
@@ -20,6 +21,7 @@ export default function CreateWorkBook() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const { showToast } = useToast();
 
   const validateWorkbookName = (name: string) => {
     // 한글, 영어 대소문자, 숫자, 공백, 언더스코어(_)만 허용
@@ -87,7 +89,7 @@ export default function CreateWorkBook() {
       await queryClient.invalidateQueries({ queryKey: ["workbooks"] });
 
       // 단어장 생성 완료 메시지
-      alert("단어장 생성이 완료되었습니다.");
+      showToast("단어장 생성이 완료되었습니다.", "success");
 
       // 생성된 단어장 목록으로 이동
       navigate("/");

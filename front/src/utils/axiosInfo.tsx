@@ -1,16 +1,18 @@
 import axios from "axios";
 
 export const vocaServerNoAuth = axios.create({
-  baseURL: "http://116.36.58.106:9001", // 테스트용 백엔드 URL
-  timeout: 10000,
+  // baseURL: "http://116.36.58.106:9001", // 테스트용 백엔드 URL
+  baseURL: "http://localhost:8080", // 테스트용 백엔드 URL
+  timeout: 20000,
   headers: {
     "Content-Type": "application/json",
   },
 });
 
 export const vocaServerNeedAuth = axios.create({
-  baseURL: "http://116.36.58.106:9001", // 테스트용 백엔드 URL
-  timeout: 10000,
+  // baseURL: "http://116.36.58.106:9001", // 테스트용 백엔드 URL
+  baseURL: "http://localhost:8080", // 테스트용 백엔드 URL
+  timeout: 20000,
   headers: {
     "Content-Type": "application/json",
   },

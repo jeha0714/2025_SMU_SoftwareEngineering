@@ -4,6 +4,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { fetchWorkBookMode } from "../utils/funcFetch";
 import { vocaServerNeedAuth } from "../utils/axiosInfo";
+import { useToast } from "../context/ToastContext";
 
 type Word = {
   wordId: number | null;
@@ -26,6 +27,7 @@ const ModifyWorkBook = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const { showToast } = useToast();
 
   // Fetch workbook data
   const { data: fetchedWorkbook, isLoading } = useQuery<WorkBook>({
@@ -142,7 +144,7 @@ const ModifyWorkBook = () => {
     setWorkbook((prev) =>
       prev ? { ...prev, wordList: updatedWordList } : null
     );
-    alert("단어 수정에 성공하셨습니다!");
+    showToast("단어 수정에 성공하셨습니다!", "success");
     setEditingWordIndex(null);
 
     // TODO: API 호출 구현
@@ -167,7 +169,7 @@ const ModifyWorkBook = () => {
 
     setShowDeleteModal(false);
     setDeleteWordIndex(null);
-    alert("단어가 삭제되었습니다.");
+    showToast("단어가 삭제되었습니다.", "success");
 
     // TODO: API 호출 구현
     // 실제 API 호출 시에는 여기서 서버에 삭제 요청
@@ -232,7 +234,7 @@ const ModifyWorkBook = () => {
       partOfSpeech: "noun",
     });
     setAddWordError("");
-    alert("단어 추가에 성공했습니다.");
+    showToast("단어 추가에 성공했습니다.", "success");
   };
 
   const handleComplete = async () => {
@@ -265,14 +267,14 @@ const ModifyWorkBook = () => {
         // Invalidate and refetch the workbook data
         await queryClient.invalidateQueries({ queryKey: ["workbook", id] });
         await queryClient.invalidateQueries({ queryKey: ["workbooks"] });
-        alert("수정이 완료되었습니다.");
+        showToast("수정이 완료되었습니다.", "success");
         navigate(`/`);
       } else {
-        alert("본인이 만든 단어장만 수정 및 삭제할 수 있습니다.");
+        showToast("본인이 만든 단어장만 수정 및 삭제할 수 있습니다.", "error");
       }
     } catch (error) {
       console.error(error);
-      alert("본인이 만든 단어장만 수정 및 삭제할 수 있습니다.");
+      showToast("본인이 만든 단어장만 수정 및 삭제할 수 있습니다.", "error");
     }
   };
 
@@ -287,15 +289,15 @@ const ModifyWorkBook = () => {
       });
 
       if (response.status === 200) {
-        alert("단어장 삭제가 완료되었습니다.");
+        showToast("단어장 삭제가 완료되었습니다.", "success");
         await queryClient.invalidateQueries({ queryKey: ["workbooks"] });
         navigate("/");
       } else {
-        alert("본인이 만든 단어장만 수정 및 삭제할 수 있습니다.");
+        showToast("본인이 만든 단어장만 수정 및 삭제할 수 있습니다.", "error");
       }
     } catch (error) {
       console.error(error);
-      alert("본인이 만든 단어장만 수정 및 삭제할 수 있습니다.");
+      showToast("본인이 만든 단어장만 수정 및 삭제할 수 있습니다.", "error");
     }
     setShowDeleteWorkbookModal(false);
   };

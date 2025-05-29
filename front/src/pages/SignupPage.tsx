@@ -4,9 +4,11 @@ import InputForm from "../components/InputForm";
 import { useMutation } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { vocaServerNoAuth } from "../utils/axiosInfo";
+import { useToast } from "../context/ToastContext";
 
 export default function SignupPage() {
   const navigate = useNavigate();
+  const { showToast } = useToast();
 
   const [statusError, setStatusError] = useState<string | null>(null);
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
@@ -106,7 +108,7 @@ export default function SignupPage() {
     onSuccess: (response) => {
       // 성공적인 가입 후 처리
       console.log("가입 성공", response.data);
-      alert("회원가입 성공!");
+      showToast("회원가입 성공!", "success");
       navigate("/signin"); // 로그인 페이지로 리디렉션
     },
     onError: (error: AxiosError<{ message: string }>) => {

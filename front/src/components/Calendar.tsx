@@ -4,6 +4,7 @@ import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import "../assets/styles/Calendar.css";
 import { vocaServerNeedAuth } from "../utils/axiosInfo";
+import { useToast } from "../context/ToastContext";
 // import { CSSProperties } from "react";
 
 const localizer = momentLocalizer(moment);
@@ -15,6 +16,7 @@ type CustomDateCellProps = {
 export default function CalendarPage() {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [attendanceDates, setAttendanceDates] = useState<string[]>([]);
+  const { showToast } = useToast();
 
   useEffect(() => {
     const token = sessionStorage.getItem("accessToken");
@@ -42,13 +44,13 @@ export default function CalendarPage() {
       })
       .catch((error) => {
         if (error.response) {
-          alert(`서버 오류: ${error.response.data?.message}`);
+          showToast(`서버 오류: ${error.response.data?.message}`, "error");
           if (error.response.status === 401) {
             sessionStorage.removeItem("accessToken");
             window.location.href = "/signin";
           }
         } else {
-          alert("서버와의 연결에 실패했습니다.");
+          showToast("서버와의 연결에 실패했습니다.", "error");
         }
       });
   }, []);

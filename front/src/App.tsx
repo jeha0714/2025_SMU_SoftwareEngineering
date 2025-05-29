@@ -13,6 +13,7 @@ import WordTestPage from "./pages/WordTestPage";
 import WorkBookDetailPage from "./pages/WorkBookDetailPage";
 import CreateWorkBook from "./pages/CreateWorkBook";
 import ModifyWorkBook from "./pages/ModifyWorkBook";
+import { ToastProvider } from "./context/ToastContext";
 
 const router = createBrowserRouter([
   {
@@ -73,13 +74,15 @@ export const queryClient = new QueryClient();
 
 function App() {
   return (
-    <main className="max-w-screen max-h-screen flex flex-col justify-cetner items-center bg-white">
-      <QueryClientProvider client={queryClient}>
-        <AuthProvider>
-          <RouterProvider router={router} />
-        </AuthProvider>
-      </QueryClientProvider>
-    </main>
+    <ToastProvider>
+      <main className="max-w-screen max-h-screen flex flex-col justify-cetner items-center bg-white">
+        <QueryClientProvider client={queryClient}>
+          <AuthProvider>
+            <RouterProvider router={router} />
+          </AuthProvider>
+        </QueryClientProvider>
+      </main>
+    </ToastProvider>
   );
 }
 
