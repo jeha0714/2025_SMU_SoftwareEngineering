@@ -7,6 +7,7 @@ import InputForm from "../components/InputForm";
 import { useAuth } from "../context/AuthContext";
 import type { AxiosError } from "axios";
 import { vocaServerNoAuth } from "../utils/axiosInfo";
+import { useToast } from "../context/ToastContext";
 
 export default function SigninPage() {
   const navigate = useNavigate();
@@ -25,6 +26,7 @@ export default function SigninPage() {
     id: false,
     password: false,
   });
+  const { showToast } = useToast();
 
   // 입력값 변경 핸들러
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -97,7 +99,7 @@ export default function SigninPage() {
       sessionStorage.setItem("roleType", role);
       setIsSubmitted(false);
       login();
-      alert("로그인에 성공했습니다.");
+      showToast("로그인에 성공했습니다.", "success");
       navigate("/");
     },
     onError: (error: AxiosError<{ status: number }>) => {

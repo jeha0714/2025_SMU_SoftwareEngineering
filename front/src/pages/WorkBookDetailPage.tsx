@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { vocaServerNeedAuth } from "../utils/axiosInfo";
 import { Medal } from "lucide-react";
+import { useToast } from "../context/ToastContext";
 
 type Word = {
   id: number;
@@ -14,12 +15,28 @@ type WorkbookListDetailProps = {
   wrong?: boolean;
 };
 
+type WorkbookResponse = {
+  title: string;
+  wordList: Word[];
+};
+
+// Fisher-Yates 알고리즘을 사용한 배열 셔플 함수
+const shuffleArray = <T,>(array: T[]): T[] => {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+};
+
 const WorkbookDetail: React.FC<WorkbookListDetailProps> = ({ wrong }) => {
   const { id } = useParams(); // 워크북 ID
   const [words, setWords] = useState<Word[]>([]);
   const [workbookName, setWorkbookName] = useState<string>(""); // 단어장 이름 상태 추가
   const [index, setIndex] = useState(0);
   const navigate = useNavigate();
+  const { showToast } = useToast();
 
   useEffect(() => {
     const url = wrong
@@ -28,17 +45,19 @@ const WorkbookDetail: React.FC<WorkbookListDetailProps> = ({ wrong }) => {
     const token = sessionStorage.getItem("accessToken");
 
     vocaServerNeedAuth
-      .get(url, {
+      .get<WorkbookResponse>(url, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       })
       .then((res) => {
         setWorkbookName(res.data.title);
-        setWords(res.data.wordList);
+        // 단어 목록을 랜덤하게 섞어서 저장
+        const shuffledWords = shuffleArray(res.data.wordList);
+        setWords(shuffledWords);
       })
       .catch((err) => {
-        alert("네트워크 연결을 확인해주세요.");
+        showToast("네트워크 연결을 확인해주세요.", "error");
         console.error("단어장 로딩 실패:", err);
         navigate("/");
       });
@@ -104,8 +123,7 @@ const WorkbookDetail: React.FC<WorkbookListDetailProps> = ({ wrong }) => {
     await addStudyWordNum();
     await checkInAttendance();
     if (index === words.length - 1) {
-      alert("학습이 종료되었습니다");
-      navigate(`/workbook/${id}`);
+      handleComplete();
       return;
     }
     setIndex((prev) => prev + 1);
@@ -114,6 +132,11 @@ const WorkbookDetail: React.FC<WorkbookListDetailProps> = ({ wrong }) => {
   const prevWord = () => {
     if (index === 0) return;
     setIndex((prev) => (prev - 1 + words.length) % words.length);
+  };
+
+  const handleComplete = () => {
+    showToast("학습이 종료되었습니다", "info");
+    navigate(`/workbook/${id}`);
   };
 
   if (words.length === 0) {
